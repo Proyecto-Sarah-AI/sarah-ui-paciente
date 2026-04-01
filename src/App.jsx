@@ -1,8 +1,6 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import LegalConsent from './components/LegalConsent'; 
+import { useState } from 'react';
+import './App.css';
+import LegalConsent from './components/LegalConsent';
 
 function App() {
   const [hasConsented, setHasConsented] = useState(false);
@@ -12,9 +10,18 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Bienvenido a Sarah</h1>
-      <p>Has aceptado los términos con éxito.</p>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      gap: '0.5rem',
+      color: 'var(--ca-navy)',
+      fontFamily: 'Inter, Segoe UI, Arial, sans-serif',
+    }}>
+      <h1 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Bienvenido/a a Sarah</h1>
+      <p style={{ color: 'var(--ca-gray-dark)' }}>Has aceptado los términos con éxito.</p>
     </div>
   );
 }

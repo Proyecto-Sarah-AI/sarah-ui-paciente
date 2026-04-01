@@ -1,0 +1,34 @@
+/* Clinica Alemana de Valdivia - Brand Colors */
+:root {
+  --ca-navy:       #003366;
+  --ca-teal:       #009EB6;
+  --ca-teal-dark:  #007A8E;
+  --ca-teal-light: #E6F6F9;
+  --ca-white:      #FFFFFF;
+  --ca-gray-light: #F4F7FA;
+  --ca-gray:       #7A8EA3;
+  --ca-gray-dark:  #3A4A5C;
+  --ca-text:       #1A2C3D;
+  --ca-disabled:   #B0BEC8;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background-color: var(--ca-gray-light);
+  color: var(--ca-text);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
