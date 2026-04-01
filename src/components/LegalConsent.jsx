@@ -1,51 +1,139 @@
 import React, { useState } from 'react';
+import './LegalConsent.css';
 
 const LegalConsent = ({ onAccept }) => {
   const [accepted, setAccepted] = useState({
     terms: false,
     dataPrivacy: false,
-    supportNetwork: false // Opcional según el paciente [cite: 47]
+    supportNetwork: false,
   });
 
   const canContinue = accepted.terms && accepted.dataPrivacy;
 
   return (
     <div className="consent-container">
-      <h2>Consentimiento Informado - Proyecto Sarah</h2>
-      <p>Bienvenido a la plataforma de acompañamiento clínico de la Clínica Alemana de Valdivia.</p>
-      
-      <div className="terms-box" style={{ height: '200px', overflowY: 'scroll', border: '1px solid #ccc' }}>
-        {/* Aquí va el texto legal según leyes chilenas [cite: 22, 49] */}
-        <p>Al utilizar este asistente, usted acepta que sus interacciones sean registradas como parte de su historial clínico[cite: 54, 55]...</p>
-      </div>
+      {/* Header */}
+      <header className="consent-header">
+        <div className="consent-logo-block">
+          <svg className="consent-logo-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="20" r="20" fill="#FFFFFF" fillOpacity="0.15" />
+            <path d="M20 8 L22 17 H31 L24 23 L27 32 L20 26 L13 32 L16 23 L9 17 H18 Z" fill="#FFFFFF" />
+          </svg>
+          <div>
+            <span className="consent-logo-name">Clínica Alemana</span>
+            <span className="consent-logo-sub">de Valdivia</span>
+          </div>
+        </div>
+      </header>
 
-      <div className="checkbox-group">
-        <label>
-          <input 
-            type="checkbox" 
-            checked={accepted.terms} 
-            onChange={(e) => setAccepted({...accepted, terms: e.target.checked})} 
-          />
-          Acepto los términos de uso de la aplicación[cite: 13].
-        </label>
+      {/* Card */}
+      <main className="consent-card">
+        <div className="consent-card-accent" aria-hidden="true" />
 
-        <label>
-          <input 
-            type="checkbox" 
-            checked={accepted.dataPrivacy} 
-            onChange={(e) => setAccepted({...accepted, dataPrivacy: e.target.checked})} 
-          />
-          Consiento el tratamiento de mis datos personales y clínicos[cite: 13, 47].
-        </label>
-      </div>
+        <div className="consent-card-body">
+          <h1 className="consent-title">Consentimiento Informado</h1>
+          <p className="consent-subtitle">
+            Proyecto <strong>Sarah</strong> — Plataforma de acompañamiento clínico
+          </p>
 
-      <button 
-        disabled={!canContinue} 
-        onClick={() => onAccept(accepted)}
-        style={{ backgroundColor: canContinue ? '#007bff' : '#ccc' }}
-      >
-        Continuar al tratamiento
-      </button>
+          <p className="consent-welcome">
+            Bienvenido/a. Antes de continuar, por favor lea detenidamente los términos
+            de uso y el tratamiento de sus datos personales.
+          </p>
+
+          {/* Scrollable terms */}
+          <div className="terms-box" role="region" aria-label="Términos y condiciones">
+            <h2 className="terms-title">Términos de Uso y Privacidad</h2>
+            <p>
+              Al utilizar este asistente, usted acepta que sus interacciones sean registradas
+              como parte de su historial clínico, de conformidad con la Ley N°19.628 sobre
+              Protección de la Vida Privada y la Ley N°20.584 sobre Derechos y Deberes de los
+              Pacientes en Chile.
+            </p>
+            <p>
+              La información recopilada será utilizada exclusivamente con fines de atención
+              clínica y mejora continua de los servicios. Sus datos no serán compartidos con
+              terceros sin su consentimiento explícito, salvo en los casos previstos por la
+              legislación vigente.
+            </p>
+            <p>
+              Usted tiene derecho a acceder, rectificar y cancelar sus datos personales en
+              cualquier momento, comunicándose directamente con el equipo de la Clínica Alemana
+              de Valdivia.
+            </p>
+            <p>
+              El uso de este sistema es voluntario. Puede interrumpir su participación en
+              cualquier momento sin que esto afecte la calidad de su atención médica.
+            </p>
+          </div>
+
+          {/* Checkboxes */}
+          <div className="checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                className="checkbox-input"
+                checked={accepted.terms}
+                onChange={(e) => setAccepted({ ...accepted, terms: e.target.checked })}
+              />
+              <span className="checkbox-custom" aria-hidden="true" />
+              <span>Acepto los <strong>términos de uso</strong> de la aplicación.</span>
+            </label>
+
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                className="checkbox-input"
+                checked={accepted.dataPrivacy}
+                onChange={(e) => setAccepted({ ...accepted, dataPrivacy: e.target.checked })}
+              />
+              <span className="checkbox-custom" aria-hidden="true" />
+              <span>Consiento el <strong>tratamiento de mis datos personales y clínicos</strong>.</span>
+            </label>
+
+            <label className="checkbox-label optional">
+              <input
+                type="checkbox"
+                className="checkbox-input"
+                checked={accepted.supportNetwork}
+                onChange={(e) => setAccepted({ ...accepted, supportNetwork: e.target.checked })}
+              />
+              <span className="checkbox-custom" aria-hidden="true" />
+              <span>
+                Autorizo compartir información con mi <strong>red de apoyo</strong>.{' '}
+                <span className="optional-tag">Opcional</span>
+              </span>
+            </label>
+          </div>
+
+          {/* CTA */}
+          <button
+            className={`consent-btn${canContinue ? '' : ' consent-btn--disabled'}`}
+            disabled={!canContinue}
+            onClick={() => onAccept(accepted)}
+            aria-disabled={!canContinue}
+          >
+            {canContinue ? (
+              <>
+                Continuar al tratamiento
+                <svg className="btn-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </>
+            ) : (
+              'Acepte los términos para continuar'
+            )}
+          </button>
+
+          <p className="consent-footer-note">
+            Al continuar, confirma que ha leído y comprendido el consentimiento informado.
+          </p>
+        </div>
+      </main>
+
+      <footer className="consent-footer">
+        <p>© {new Date().getFullYear()} Clínica Alemana de Valdivia · Todos los derechos reservados</p>
+      </footer>
     </div>
   );
 };

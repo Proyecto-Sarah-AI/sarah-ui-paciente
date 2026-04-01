@@ -1,0 +1,282 @@
+/* ============================================
+   LegalConsent.css — Clínica Alemana de Valdivia
+   ============================================ */
+
+/* ---- Layout wrapper ---- */
+.consent-container {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---- Header ---- */
+.consent-header {
+  background-color: var(--ca-navy);
+  border-radius: 16px 16px 0 0;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.consent-logo-block {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.consent-logo-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+.consent-logo-name {
+  display: block;
+  color: var(--ca-white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+.consent-logo-sub {
+  display: block;
+  color: var(--ca-teal);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- Card ---- */
+.consent-card {
+  background-color: var(--ca-white);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 24px rgba(0, 51, 102, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.consent-card-accent {
+  height: 4px;
+  background: linear-gradient(90deg, var(--ca-teal) 0%, var(--ca-navy) 100%);
+}
+
+.consent-card-body {
+  padding: 2rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ---- Title block ---- */
+.consent-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ca-navy);
+  line-height: 1.2;
+}
+
+.consent-subtitle {
+  font-size: 0.95rem;
+  color: var(--ca-teal-dark);
+  margin-top: -0.75rem;
+  font-weight: 500;
+}
+
+.consent-welcome {
+  font-size: 0.95rem;
+  color: var(--ca-gray-dark);
+  line-height: 1.6;
+}
+
+/* ---- Terms scrollbox ---- */
+.terms-box {
+  background-color: var(--ca-gray-light);
+  border: 1px solid #D0DCE8;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ca-teal) transparent;
+}
+
+.terms-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terms-box::-webkit-scrollbar-thumb {
+  background-color: var(--ca-teal);
+  border-radius: 99px;
+}
+
+.terms-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ca-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.25rem;
+}
+
+.terms-box p {
+  font-size: 0.875rem;
+  color: var(--ca-gray-dark);
+  line-height: 1.65;
+}
+
+/* ---- Checkbox group ---- */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1.25rem 1.5rem;
+  background-color: var(--ca-teal-light);
+  border-radius: 10px;
+  border-left: 4px solid var(--ca-teal);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--ca-gray-dark);
+  line-height: 1.5;
+  position: relative;
+}
+
+.checkbox-label:hover .checkbox-custom {
+  border-color: var(--ca-teal);
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid var(--ca-gray);
+  border-radius: 5px;
+  background-color: var(--ca-white);
+  transition: all 0.15s ease;
+  margin-top: 1px;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background-color: var(--ca-teal);
+  border-color: var(--ca-teal);
+}
+
+.checkbox-input:checked + .checkbox-custom::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  border: 2px solid var(--ca-white);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.checkbox-input:focus-visible + .checkbox-custom {
+  outline: 2px solid var(--ca-teal);
+  outline-offset: 2px;
+}
+
+.optional-tag {
+  display: inline-block;
+  background-color: #D4EFF4;
+  color: var(--ca-teal-dark);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 99px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---- CTA Button ---- */
+.consent-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  background-color: var(--ca-teal);
+  color: var(--ca-white);
+  letter-spacing: 0.01em;
+}
+
+.consent-btn:hover:not(.consent-btn--disabled) {
+  background-color: var(--ca-teal-dark);
+  transform: translateY(-1px);
+}
+
+.consent-btn:active:not(.consent-btn--disabled) {
+  transform: translateY(0);
+}
+
+.consent-btn--disabled {
+  background-color: var(--ca-disabled);
+  color: var(--ca-white);
+  cursor: not-allowed;
+}
+
+.btn-arrow {
+  width: 18px;
+  height: 18px;
+}
+
+.consent-footer-note {
+  font-size: 0.78rem;
+  color: var(--ca-gray);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ---- Footer ---- */
+.consent-footer {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ca-gray);
+  padding-bottom: 0.5rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 500px) {
+  .consent-card-body {
+    padding: 1.5rem 1.25rem 2rem;
+  }
+
+  .consent-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .consent-title {
+    font-size: 1.3rem;
+  }
+}
