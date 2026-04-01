@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import LegalConsent from './components/LegalConsent';
+import LegalConsent from './components/LegalConsent'; 
 
 function App() {
   const [hasConsented, setHasConsented] = useState(false);
@@ -11,6 +11,12 @@ function App() {
     return <LegalConsent onAccept={() => setHasConsented(true)} />;
   }
 
-  return <ChatContainer />; // El resto de la app
+  return (
+    <div>
+      <h1>Bienvenido a Sarah</h1>
+      <p>Has aceptado los términos con éxito.</p>
+    </div>
+  );
 }
-export default App
+
+export default App;
