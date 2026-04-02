@@ -1,8 +1,62 @@
-# React + Vite
+# Sarah - UI Paciente 🏥
+**Asistente Clínico Conversacional - Clínica Alemana de Valdivia**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este repositorio contiene la interfaz de usuario (Frontend) orientada al paciente del proyecto **Sarah**. El sistema está diseñado para mejorar la adherencia al tratamiento y el seguimiento clínico mediante un asistente conversacional y módulos de registro de comportamiento.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📋 Estado del Proyecto
+Actualmente, el proyecto se encuentra en su **Fase Inicial de Desarrollo (Sprint 1)**, con la infraestructura de despliegue configurada y los módulos base establecidos para asegurar la **disponibilidad** y **confiabilidad** del sistema.
+
+### Hitos Completados:
+* **Entorno de Desarrollo:** Inicialización con **Vite + React** para garantizar tiempos de carga menores a 2 segundos (**Rendimiento**).
+* **Infraestructura Cloud:** Configuración de **CI/CD** mediante la vinculación de **GitHub** con **Vercel** para despliegues automáticos.
+* **Módulo Legal (Regla 5.3):** Implementación del componente de **Consentimiento Informado**, requisito obligatorio antes de cualquier interacción con el sistema.
+
+---
+
+## 🚀 Tecnologías y Herramientas
+* **Frontend:** React.js (Vite)
+* **Despliegue:** Vercel (PaaS)
+* **Control de Versiones:** Git / GitHub
+* **Entorno de Trabajo:** Ubuntu (VMware / WSL)
+
+---
+
+## 🛠️ Instalación y Configuración Local
+
+Para replicar el entorno de desarrollo en una máquina virtual o localmente, siga estos pasos:
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/CristobalEsp01/sarah-ui-paciente.git](https://github.com/CristobalEsp01/sarah-ui-paciente.git)
+   cd sarah-ui-paciente
+Instalar dependencias:
+Bash
+
+npm install
+
+Ejecutar en modo desarrollo:
+Bash
+
+    npx vite --host
+
+    Nota: Se utiliza --host para permitir el acceso desde el navegador de la máquina física o dispositivos móviles, validando la usabilidad.
+
+🔐 Requisitos No Funcionales Cubiertos
+
+    Seguridad y Privacidad: Gestión de accesos mediante Personal Access Tokens (PAT) y cumplimiento de leyes de protección de datos mediante el flujo de consentimiento.
+
+    Auditabilidad: Trazabilidad completa de cambios mediante un flujo de trabajo basado en ramas y commits descriptivos.
+
+    Escalabilidad: Estructura de carpetas preparada para soportar el crecimiento de la base de usuarios (100+ pacientes).
+
+👥 Equipo (UI Paciente)
+
+    Cristóbal Espinoza - Responsable de Interfaz de Términos y Condiciones / Líder de UI.
+
+    Lorenzo - Home / Dashboard.
+
+    Martin - Interfaz del Agente Conversacional.
+
+    Nico - Login y Registro.
