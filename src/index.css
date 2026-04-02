@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Clinica Alemana de Valdivia - Brand Colors */
 :root {
   --ca-navy:       #003366;

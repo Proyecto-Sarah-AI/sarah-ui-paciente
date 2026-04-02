@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LegalConsent from './components/LegalConsent';
-// import Home from './components/Home'; // Cuando Lorenzo lo tenga listo
+import { Home } from "./pages/home";
 
 function App() {
   // Estado inicial: revisamos si ya aceptó en sesiones anteriores (UX/Usabilidad)
@@ -54,18 +54,27 @@ function App() {
 
   // Aquí es donde Lorenzo (Home) y Martín (Agente) pondrán su magia
   return (
-    <div className="main-dashboard">
-      <nav> Barra de Navegación - Sarah </nav>
-      <h1>¡Bienvenido, Paciente!</h1>
-      <p>Aquí se deberia redireccionar al home page.</p>
-      <button onClick={() => {
-        localStorage.removeItem('sarah_consent_status');
-        window.location.reload();
-      }}>
-        Resetear (Solo para pruebas de desarrollo)
-      </button>
-    </div>
+    <>
+      {/* Solo se muestra Home si hay consentimiento, si no, muestra el Consentimiento */}
+      {hasConsented ? (
+        <Home />
+      ) : (
+        <ConsentScreen onAccept={handleAccept} />
+      )}
+      
+      {/* Botón de reset temporal para desarrollo */}
+      <div style={{ position: 'fixed', bottom: '10px', right: '10px', opacity: 0.5 }}>
+        <button 
+          onClick={() => {
+            localStorage.removeItem('sarah_consent_status');
+            window.location.reload();
+          }}
+          style={{ fontSize: '10px', padding: '5px', cursor: 'pointer' }}
+        >
+          Reset Consent (Dev Only)
+        </button>
+      </div>
+    </>
   );
 }
-
 export default App;
