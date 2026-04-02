@@ -53,10 +53,10 @@ Bash
 
 👥 Equipo (UI Paciente)
 
-    Cristóbal Espinoza - Responsable de Interfaz de Términos y Condiciones / Líder de UI.
+    Cristóbal Espinoza - Responsable de Interfaz de Términos y Condiciones / Responsable del Equipo UI.
 
-    Lorenzo - Home / Dashboard.
+    Lorenzo Vera - Home / Dashboard.
 
-    Martin - Interfaz del Agente Conversacional.
+    Martin Maza - Interfaz del Agente Conversacional.
 
-    Nico - Login y Registro.
+    Nicolás Molina - Login y Registro.
