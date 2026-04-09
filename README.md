@@ -31,17 +31,17 @@ Para replicar el entorno de desarrollo en una máquina virtual o localmente, sig
    ```bash
    git clone [https://github.com/CristobalEsp01/sarah-ui-paciente.git](https://github.com/CristobalEsp01/sarah-ui-paciente.git)
    cd sarah-ui-paciente
-Instalar dependencias:
-Bash
+   ```
 
-npm install
+2. **Levantar el sistema**
+   ```bash
+   docker compose up -d --build
+   ```
 
-Ejecutar en modo desarrollo:
-Bash
-
-    npx vite --host
-
-    Nota: Se utiliza --host para permitir el acceso desde el navegador de la máquina física o dispositivos móviles, validando la usabilidad.
+3. **Bajar el sistema**
+   ```bash
+   docker compose down -v
+   ```
 
 🔐 Requisitos No Funcionales Cubiertos
 

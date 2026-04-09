@@ -1,40 +1,46 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import '../styles/Login.css';
-import logoClinicaAlemana from '../assets/clinica-alemana-logo.png';
+import React, { useState } from 'react'
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import './Login.css'
+import logoClinicaAlemana from '../../assets/clinica-alemana-logo.png'
 
-export function Login({ onSwitchToRegister }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState('');
+export default function Login() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [emailError, setEmailError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const validateEmail = (value) => {
     if (!value) {
-      setEmailError('');
-      return;
+      setEmailError('')
+      return
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) {
-      setEmailError('Por favor ingresa un correo válido');
-    } else {
-      setEmailError('');
-    }
-  };
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    setEmailError(emailRegex.test(value) ? '' : 'Por favor ingresa un correo válido')
+  }
 
   const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    validateEmail(value);
-  };
+    const value = e.target.value
+    setEmail(value)
+    validateEmail(value)
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email && password && !emailError) {
-      console.log('Login attempt:', { email });
-      alert('Inicio de sesión simulado. En producción se conectaria al backend.');
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    setLoading(true)
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      localStorage.setItem('sarah_auth_status', 'authenticated')
+      localStorage.setItem('sarah_user_email', email)
+      localStorage.setItem('sarah_auth_timestamp', new Date().toISOString())
+      window.location.assign('/home')
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="login-container">
@@ -46,9 +52,7 @@ export function Login({ onSwitchToRegister }) {
             className="login-logo"
           />
           <h1 className="login-title">Bienvenido de vuelta</h1>
-          <p className="login-subtitle">
-            Ingresa para continuar con tu tratamiento
-          </p>
+          <p className="login-subtitle">Ingresa para continuar con tu tratamiento</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -69,14 +73,11 @@ export function Login({ onSwitchToRegister }) {
                 aria-describedby={emailError ? 'email-error' : undefined}
               />
             </div>
-            {emailError && (
-              <p
-                id="email-error"
-                className="error-message"
-              >
+            {emailError ? (
+              <p id="email-error" className="error-message">
                 {emailError}
               </p>
-            )}
+            ) : null}
           </div>
 
           <div className="form-group">
@@ -99,47 +100,24 @@ export function Login({ onSwitchToRegister }) {
                 className="password-toggle"
                 aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
-                {showPassword ? (
-                  <EyeOff size={24} />
-                ) : (
-                  <Eye size={24} />
-                )}
+                {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
               </button>
             </div>
           </div>
 
-          <button
-            type="button"
-            className="forgot-password-btn"
-          >
+          <button type="button" className="forgot-password-btn">
             ¿Olvidaste tu contraseña?
           </button>
 
-          <button
-            type="submit"
-            disabled={!email || !password || !!emailError}
-            className="submit-btn"
-          >
-            Iniciar sesión
+          <button type="submit" disabled={loading} className="submit-btn">
+            {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>
         </form>
-
-        <div className="login-footer">
-          <p className="footer-text">
-            ¿No tienes cuenta?{' '}
-            <button
-              onClick={onSwitchToRegister}
-              className="switch-link"
-            >
-              Regístrate aquí
-            </button>
-          </p>
-        </div>
 
         <p className="privacy-notice">
           🔒 Tus datos están protegidos bajo las normas de privacidad médica
         </p>
       </div>
     </div>
-  );
+  )
 }

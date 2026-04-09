@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
-import './LegalConsent.css';
+import React, { useState } from 'react'
+import './Consent.css'
 
-const LegalConsent = ({ onAccept }) => {
+export default function Consent() {
   const [accepted, setAccepted] = useState({
     terms: false,
     dataPrivacy: false,
     supportNetwork: false,
-  });
+  })
+  const [loading, setLoading] = useState(false)
 
-  const canContinue = accepted.terms && accepted.dataPrivacy;
+  const canContinue = accepted.terms && accepted.dataPrivacy
+
+  const handleContinue = async () => {
+    setLoading(true)
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      localStorage.setItem('sarah_consent_status', 'accepted')
+      localStorage.setItem('sarah_consent_timestamp', new Date().toISOString())
+      window.location.assign('/login')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="consent-container">
-      {/* Header */}
       <header className="consent-header">
         <div className="consent-logo-block">
           <svg className="consent-logo-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -26,7 +39,6 @@ const LegalConsent = ({ onAccept }) => {
         </div>
       </header>
 
-      {/* Card */}
       <main className="consent-card">
         <div className="consent-card-accent" aria-hidden="true" />
 
@@ -41,7 +53,6 @@ const LegalConsent = ({ onAccept }) => {
             de uso y el tratamiento de sus datos personales.
           </p>
 
-          {/* Scrollable terms */}
           <div className="terms-box" role="region" aria-label="Términos y condiciones">
             <h2 className="terms-title">Términos de Uso y Privacidad</h2>
             <p>
@@ -67,7 +78,6 @@ const LegalConsent = ({ onAccept }) => {
             </p>
           </div>
 
-          {/* Checkboxes */}
           <div className="checkbox-group">
             <label className="checkbox-label">
               <input
@@ -106,23 +116,18 @@ const LegalConsent = ({ onAccept }) => {
             </label>
           </div>
 
-          {/* CTA */}
           <button
             className={`consent-btn${canContinue ? '' : ' consent-btn--disabled'}`}
-            disabled={!canContinue}
-            onClick={() => onAccept(accepted)}
-            aria-disabled={!canContinue}
+            disabled={loading}
+            onClick={handleContinue}
+            aria-disabled={loading}
           >
-            {canContinue ? (
-              <>
-                Continuar al tratamiento
-                <svg className="btn-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </>
-            ) : (
-              'Acepte los términos para continuar'
-            )}
+            {loading ? 'Procesando...' : canContinue ? 'Continuar al tratamiento' : 'Acepte los términos para continuar'}
+            {canContinue && !loading ? (
+              <svg className="btn-arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            ) : null}
           </button>
 
           <p className="consent-footer-note">
@@ -135,7 +140,5 @@ const LegalConsent = ({ onAccept }) => {
         <p>© {new Date().getFullYear()} Clínica Alemana de Valdivia · Todos los derechos reservados</p>
       </footer>
     </div>
-  );
-};
-
-export default LegalConsent;
+  )
+}
