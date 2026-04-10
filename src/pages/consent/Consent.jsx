@@ -18,7 +18,7 @@ export default function Consent() {
       await new Promise((resolve) => setTimeout(resolve, 1500))
       localStorage.setItem('sarah_consent_status', 'accepted')
       localStorage.setItem('sarah_consent_timestamp', new Date().toISOString())
-      window.location.assign('/login')
+      window.location.assign('/home')
     } finally {
       setLoading(false)
     }
@@ -26,19 +26,6 @@ export default function Consent() {
 
   return (
     <div className="consent-container">
-      <header className="consent-header">
-        <div className="consent-logo-block">
-          <svg className="consent-logo-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="20" cy="20" r="20" fill="#FFFFFF" fillOpacity="0.15" />
-            <path d="M20 8 L22 17 H31 L24 23 L27 32 L20 26 L13 32 L16 23 L9 17 H18 Z" fill="#FFFFFF" />
-          </svg>
-          <div>
-            <span className="consent-logo-name">Clínica Alemana</span>
-            <span className="consent-logo-sub">de Valdivia</span>
-          </div>
-        </div>
-      </header>
-
       <main className="consent-card">
         <div className="consent-card-accent" aria-hidden="true" />
 
@@ -69,8 +56,7 @@ export default function Consent() {
             </p>
             <p>
               Usted tiene derecho a acceder, rectificar y cancelar sus datos personales en
-              cualquier momento, comunicándose directamente con el equipo de la Clínica Alemana
-              de Valdivia.
+              cualquier momento, comunicándose directamente con el equipo médico.
             </p>
             <p>
               El uso de este sistema es voluntario. Puede interrumpir su participación en
@@ -136,9 +122,6 @@ export default function Consent() {
         </div>
       </main>
 
-      <footer className="consent-footer">
-        <p>© {new Date().getFullYear()} Clínica Alemana de Valdivia · Todos los derechos reservados</p>
-      </footer>
     </div>
   )
 }

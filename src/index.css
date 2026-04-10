@@ -2,16 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-  --ca-navy:       #003366;
-  --ca-teal:       #009EB6;
-  --ca-teal-dark:  #007A8E;
-  --ca-teal-light: #E6F6F9;
+  --ca-bg:         #f5f8fd;
+  --ca-bg-secondary: #dfe2e8;
+  --ca-text:       #1f293b;
+  --ca-text-secondary: #67778c;
+  --ca-accent:     #0db17f;
+  --ca-accent-hover: #17785a;
+  --ca-navy:       #1f293b;
+  --ca-teal:       #0db17f;
+  --ca-teal-dark:  #17785a;
+  --ca-teal-light: #e8f7f2;
   --ca-white:      #FFFFFF;
-  --ca-gray-light: #F4F7FA;
-  --ca-gray:       #7A8EA3;
-  --ca-gray-dark:  #3A4A5C;
-  --ca-text:       #1A2C3D;
-  --ca-disabled:   #B0BEC8;
+  --ca-gray-light: #f5f8fd;
+  --ca-gray:       #67778c;
+  --ca-gray-dark:  #1f293b;
+  --ca-disabled:   #9ba5b3;
 }
 
 *, *::before, *::after {
@@ -26,7 +31,7 @@ html, body, #root {
 
 body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  background-color: var(--ca-gray-light);
+  background-color: var(--ca-bg);
   color: var(--ca-text);
   min-height: 100vh;
 }

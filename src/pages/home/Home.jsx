@@ -22,14 +22,14 @@ function DashboardHeader({ onLogout }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   return (
-    <header className="w-full bg-[#003366] text-white py-4 px-4 md:px-6 sticky top-0 z-50 shadow-md">
+    <header className="w-full bg-[#1f293b] text-white py-4 px-4 md:px-6 sticky top-0 z-50 shadow-md">
       <div className="max-w-4xl mx-auto flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-lg md:text-xl font-semibold tracking-wide">
-            Clinica Alemana
+            Sarah
           </span>
-          <span className="text-xs md:text-sm text-white/80 font-light tracking-widest uppercase">
-            de Valdivia
+          <span className="text-xs md:text-sm text-[#0db17f] font-light tracking-widest uppercase">
+            Tu Asistente de Salud
           </span>
         </div>
 
@@ -41,10 +41,8 @@ function DashboardHeader({ onLogout }) {
             <span className="text-sm md:text-base font-medium hidden sm:inline">
               Hola, Lorenzo
             </span>
-            <span className="text-lg" role="img" aria-label="nerd face">
-              🤓
-            </span>
-            <div className="h-9 w-9 rounded-full border-2 border-white/30 bg-[#009999] flex items-center justify-center text-white text-sm font-semibold">
+           
+            <div className="h-9 w-9 rounded-full border-2 border-white/30 bg-[#0db17f] flex items-center justify-center text-white text-sm font-semibold">
               LM
             </div>
             <ChevronDown className={`h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -103,10 +101,10 @@ function MedicationWidget() {
   const [isTaken, setIsTaken] = useState(false)
 
   return (
-    <div className="bg-white rounded-xl border-l-4 border-l-[#009999] shadow-lg overflow-hidden">
+    <div className="bg-white rounded-xl border-l-4 border-l-[#0db17f] shadow-lg overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100">
-        <h2 className="flex items-center gap-2 text-[#003366] text-lg md:text-xl font-bold">
-          <Pill className="h-5 w-5 md:h-6 md:w-6 text-[#009999]" />
+        <h2 className="flex items-center gap-2 text-[#1f293b] text-lg md:text-xl font-bold">
+          <Pill className="h-5 w-5 md:h-6 md:w-6 text-[#0db17f]" />
           Proximo Medicamento
         </h2>
       </div>
@@ -131,15 +129,15 @@ function MedicationWidget() {
           </div>
         ) : (
           <>
-            <div className="flex items-start gap-4 p-4 bg-[#F7F9FB] rounded-lg">
-              <div className="rounded-full bg-[#009999]/10 p-3 shrink-0">
-                <Clock className="h-6 w-6 text-[#009999]" />
+            <div className="flex items-start gap-4 p-4 bg-[#f5f8fd] rounded-lg">
+              <div className="rounded-full bg-[#0db17f]/10 p-3 shrink-0">
+                <Clock className="h-6 w-6 text-[#0db17f]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg md:text-xl font-bold text-[#003366]">
+                <h3 className="text-lg md:text-xl font-bold text-[#1f293b]">
                   Amoxicilina 500mg
                 </h3>
-                <p className="text-2xl md:text-3xl font-bold text-[#009999] mt-1">
+                <p className="text-2xl md:text-3xl font-bold text-[#0db17f] mt-1">
                   21:00 hrs
                 </p>
                 <p className="text-sm md:text-base text-gray-500 mt-2">
@@ -150,13 +148,13 @@ function MedicationWidget() {
 
             <button
               onClick={() => setIsTaken(true)}
-              className="w-full flex items-center justify-center gap-2 bg-[#009999] hover:bg-[#007777] text-white text-base md:text-lg font-semibold py-4 rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 bg-[#0db17f] hover:bg-[#17785a] text-white text-base md:text-lg font-semibold py-4 rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <CheckCircle2 className="h-5 w-5" />
               Marcar como Tomado
             </button>
 
-            <button className="flex items-center justify-center gap-2 w-full text-[#009999] hover:text-[#007777] text-sm md:text-base font-medium py-2 transition-colors hover:underline underline-offset-4">
+            <button className="flex items-center justify-center gap-2 w-full text-[#0db17f] hover:text-[#17785a] text-sm md:text-base font-medium py-2 transition-colors hover:underline underline-offset-4">
               <MessageCircleQuestion className="h-4 w-4" />
               Tengo dudas / Ver efectos secundarios
             </button>
@@ -180,22 +178,22 @@ function AIAssistantInput() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-[#009999]/20 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg border border-[#0db17f]/20 overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100">
-        <h2 className="flex items-center gap-2 text-[#003366] text-base md:text-lg font-bold">
-          <Sparkles className="h-5 w-5 text-[#009999]" />
+        <h2 className="flex items-center gap-2 text-[#1f293b] text-base md:text-lg font-bold">
+          <Sparkles className="h-5 w-5 text-[#0db17f]" />
           Consultar a Sarah (IA)
         </h2>
       </div>
       <div className="p-5">
         <form onSubmit={handleSubmit} className="relative">
-          <div className="flex items-center gap-2 p-2 bg-[#F7F9FB] rounded-xl border-2 border-[#009999]/30 focus-within:border-[#009999] transition-colors">
+          <div className="flex items-center gap-2 p-2 bg-[#f5f8fd] rounded-xl border-2 border-[#0db17f]/30 focus-within:border-[#0db17f] transition-colors">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="¿Sarah, puedo tomar Paracetamol con mi tratamiento actual?"
-              className="flex-1 bg-transparent border-none outline-none px-3 py-3 text-sm md:text-base text-[#1a1a2e] placeholder:text-gray-400"
+              className="flex-1 bg-transparent border-none outline-none px-3 py-3 text-sm md:text-base text-[#1f293b] placeholder:text-gray-400"
               aria-label="Pregunta a Sarah"
             />
             <button
@@ -204,7 +202,7 @@ function AIAssistantInput() {
               className={`shrink-0 h-10 w-10 rounded-full flex items-center justify-center transition-colors ${
                 isListening
                   ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                  : 'hover:bg-[#009999]/10 text-[#009999]'
+                  : 'hover:bg-[#0db17f]/10 text-[#0db17f]'
               }`}
               aria-label={isListening ? 'Detener grabacion' : 'Iniciar grabacion de voz'}
             >
@@ -213,7 +211,7 @@ function AIAssistantInput() {
             <button
               type="submit"
               disabled={!query.trim()}
-              className="shrink-0 h-10 w-10 rounded-full bg-[#009999] hover:bg-[#007777] text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="shrink-0 h-10 w-10 rounded-full bg-[#0db17f] hover:bg-[#17785a] text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               aria-label="Enviar pregunta"
             >
               <Send className="h-5 w-5" />
@@ -237,20 +235,20 @@ function AIAssistantInput() {
 function QuickAccessCard({ title, icon, href, description }) {
   return (
     <a href={href} className="block group">
-      <div className="h-full bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-200 hover:border-[#009999]/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+      <div className="h-full bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-200 hover:border-[#0db17f]/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
         <div className="p-4 md:p-5 flex flex-col items-center text-center space-y-3">
-          <div className="rounded-full bg-[#003366]/5 p-4 group-hover:bg-[#009999]/10 transition-colors">
+          <div className="rounded-full bg-[#1f293b]/5 p-4 group-hover:bg-[#0db17f]/10 transition-colors">
             {icon}
           </div>
           <div className="space-y-1">
-            <h3 className="font-semibold text-[#003366] text-sm md:text-base leading-tight">
+            <h3 className="font-semibold text-[#1f293b] text-sm md:text-base leading-tight">
               {title}
             </h3>
             {description ? (
-              <p className="text-xs text-gray-500 hidden md:block">{description}</p>
+              <p className="text-xs text-[#67778c] hidden md:block">{description}</p>
             ) : null}
           </div>
-          <ChevronRight className="h-4 w-4 text-[#009999] opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ChevronRight className="h-4 w-4 text-[#0db17f] opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </div>
     </a>
@@ -262,32 +260,32 @@ function QuickAccessGrid() {
     {
       title: 'Mi Tratamiento Actual',
       description: 'Ver medicamentos y horarios',
-      icon: <Pill className="h-7 w-7 md:h-8 md:w-8 text-[#009999]" />,
+      icon: <Pill className="h-7 w-7 md:h-8 md:w-8 text-[#0db17f]" />,
       href: '#tratamiento',
     },
     {
       title: 'Reportar Actividad/Nutricion',
       description: 'Registra ejercicio y comidas',
-      icon: <Activity className="h-7 w-7 md:h-8 md:w-8 text-[#009999]" />,
+      icon: <Activity className="h-7 w-7 md:h-8 md:w-8 text-[#0db17f]" />,
       href: '#actividad',
     },
     {
       title: 'Mis Avances y Adherencia',
       description: 'Seguimiento de tu progreso',
-      icon: <Target className="h-7 w-7 md:h-8 md:w-8 text-[#009999]" />,
+      icon: <Target className="h-7 w-7 md:h-8 md:w-8 text-[#0db17f]" />,
       href: '#avances',
     },
     {
       title: 'Contactar a mi Equipo Medico',
       description: 'Comunicacion directa',
-      icon: <Stethoscope className="h-7 w-7 md:h-8 md:w-8 text-[#009999]" />,
+      icon: <Stethoscope className="h-7 w-7 md:h-8 md:w-8 text-[#0db17f]" />,
       href: '#equipo-medico',
     },
   ]
 
   return (
     <section aria-labelledby="quick-access-title">
-      <h2 id="quick-access-title" className="text-lg md:text-xl font-bold text-[#003366] mb-4">
+      <h2 id="quick-access-title" className="text-lg md:text-xl font-bold text-[#1f293b] mb-4">
         Acceso Rapido
       </h2>
       <div className="grid grid-cols-2 gap-3 md:gap-4">
@@ -316,7 +314,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F9FB]">
+    <div className="min-h-screen bg-[#f5f8fd]">
       <DashboardHeader onLogout={handleLogout} />
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -332,11 +330,8 @@ export default function Home() {
         <QuickAccessGrid />
 
         <footer className="text-center py-6">
-          <p className="text-xs text-gray-500">
-            Sarah - Tu Companero de Salud Inteligente
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            © 2026 Clinica Alemana de Valdivia
+          <p className="text-xs text-[#67778c]">
+            Sarah - Tu Asistente de Salud Inteligente
           </p>
         </footer>
       </main>

@@ -1,9 +1,20 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # 1. Usamos una imagen de Node oficial en lugar de tu Dockerfile de producción
+    image: node:20-alpine
     container_name: sarah-ui-paciente
+    working_dir: /app
+    
+    # 2. Tu puerto deseado (3005) conectado a Vite (5173)
     ports:
-      - "3005:80"
+      - "3005:5173"
+      
+    # 3. Conectamos tus archivos locales con los del contenedor
+    volumes:
+      - .:/app
+      # Esta línea protege los módulos de Node para que no den conflictos de sistema operativo
+      - /app/node_modules
+      
+    # 4. Instalamos dependencias (por si acaso) y levantamos Vite
+    command: sh -c "npm install && npm run dev -- --host"
     restart: unless-stopped

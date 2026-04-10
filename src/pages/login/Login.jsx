@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import './Login.css'
-import logoClinicaAlemana from '../../assets/clinica-alemana-logo.png'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -36,7 +35,7 @@ export default function Login() {
       localStorage.setItem('sarah_auth_status', 'authenticated')
       localStorage.setItem('sarah_user_email', email)
       localStorage.setItem('sarah_auth_timestamp', new Date().toISOString())
-      window.location.assign('/home')
+      window.location.assign('/consent')
     } finally {
       setLoading(false)
     }
@@ -46,11 +45,6 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <img
-            src={logoClinicaAlemana}
-            alt="Clínica Alemana"
-            className="login-logo"
-          />
           <h1 className="login-title">Bienvenido de vuelta</h1>
           <p className="login-subtitle">Ingresa para continuar con tu tratamiento</p>
         </div>
