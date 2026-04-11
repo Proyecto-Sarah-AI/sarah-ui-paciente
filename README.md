@@ -4,7 +4,8 @@
 Sarah es un agente de Inteligencia Artificial diseñado para acompañar a pacientes médicos, facilitando el seguimiento de sus tratamientos, recordatorios de medicamentos y resolución de dudas clínicas en tiempo real.
 
 ## 👥 Equipo de Desarrollo
-* **Cristóbal** * **Lorenzo**
+* **Cristóbal** 
+* **Lorenzo**
 * **Martín**
 * **Nico**
 
@@ -48,13 +49,13 @@ El proyecto está dockerizado para asegurar que todo el equipo trabaje con la mi
    sudo docker compose up -d --build
    ```
 3. Instala las dependencias dentro del contenedor (si es la primera vez o se actualizo el package.json)
-```bash
-   sudo docker compose exec app npm install
-```
+   ```bash
+      sudo docker compose exec app npm install
+   ```
 4. Accede a la aplicacion en vivo desde tu navegador
-```bash 
-URL: http://localhost:3005
-```
+   ```bash 
+   URL: http://localhost:3005
+   ```
 
 * Nota: Cualquier cambio realizado en el codigo fuente (.jsx, .css, etc.) se reflejara automaticamente en el navegador gracias a la configuracion de volumenes en el docker-compose.yml
 
@@ -64,11 +65,11 @@ La aplicacion esta alojada en Vercel. Debido a restricciones del plan de equipo,
 ## Intrucciones de despliegue
 1. Asegurate de tener los ultimos cambios en tu rama local (git pull)
 2. Verifica que tienes vercel instalado globalmente en tu sistema anfitrion
-```bash
-npm i -g vercel
-```
+   ```bash
+   npm i -g vercel
+   ```
 3. Lanza el despliegue a produccion
-```bash
-vercel --prod
-```
+   ```bash
+   vercel --prod
+   ```
 
