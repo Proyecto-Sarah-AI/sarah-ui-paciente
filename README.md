@@ -13,7 +13,7 @@ Sarah es un agente de Inteligencia Artificial diseñado para acompañar a pacien
 
 ## 🛠️ Stack Tecnológico
 * **Frontend:** React + Vite
-* **Estilos:** Tailwind CSS (Implementación sin librerías externas de UI para mayor control de diseño)
+* **Estilos:** Tailwind CSS (Implementación sin librerías externas de UI para mayor control de diseño) // Se cambiara a BaseUI por decision del equipo SophiaLT
 * **Iconografía:** Lucide React
 * **Enrutamiento:** React Router DOM
 * **Infraestructura Local:** Docker & Docker Compose
