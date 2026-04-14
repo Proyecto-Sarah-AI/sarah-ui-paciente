@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   User,
@@ -18,7 +18,12 @@ import {
   ChevronDown,
 } from 'lucide-react'
 
-function DashboardHeader({ onLogout }) {
+// 1. INTERFAZ: Definimos los tipos para los props del Header
+interface DashboardHeaderProps {
+  onLogout: () => void;
+}
+
+function DashboardHeader({ onLogout }: DashboardHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   return (
@@ -169,7 +174,8 @@ function AIAssistantInput() {
   const [query, setQuery] = useState('')
   const [isListening, setIsListening] = useState(false)
 
-  const handleSubmit = (e) => {
+  // 2. TIPO DE EVENTO: Le decimos a TS que 'e' es un evento de formulario
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (query.trim()) {
       console.log('Query submitted:', query)
@@ -232,7 +238,15 @@ function AIAssistantInput() {
   )
 }
 
-function QuickAccessCard({ title, icon, href, description }) {
+// 3. INTERFAZ: Tipamos los props de las tarjetas de acceso rápido
+interface QuickAccessCardProps {
+  title: string;
+  icon: React.ReactNode;
+  href: string;
+  description?: string; // El signo '?' significa que es opcional
+}
+
+function QuickAccessCard({ title, icon, href, description }: QuickAccessCardProps) {
   return (
     <a href={href} className="block group">
       <div className="h-full bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-200 hover:border-[#0db17f]/50 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
