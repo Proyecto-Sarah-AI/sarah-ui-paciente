@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { Form } from '@base-ui/react/form'
+import { Field } from '@base-ui/react/field'
+import { Eye, EyeOff, KeyRound, Mail } from 'lucide-react'
 import './Login.css'
 
 export default function Login() {
@@ -9,7 +11,7 @@ export default function Login() {
   const [emailError, setEmailError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const validateEmail = (value) => {
+  const validateEmail = (value: string) => {
     if (!value) {
       setEmailError('')
       return
@@ -19,13 +21,12 @@ export default function Login() {
     setEmailError(emailRegex.test(value) ? '' : 'Por favor ingresa un correo válido')
   }
 
-  const handleEmailChange = (e) => {
-    const value = e.target.value
+  const handleEmailChange = (value: string) => {
     setEmail(value)
     validateEmail(value)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     setLoading(true)
@@ -49,18 +50,18 @@ export default function Login() {
           <p className="login-subtitle">Ingresa para continuar con tu tratamiento</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
+        <Form onSubmit={handleSubmit} className="login-form">
+          <Field.Root className="form-group" invalid={!!emailError}>
+            <Field.Label className="form-label">
               Correo electrónico
-            </label>
+            </Field.Label>
             <div className="input-wrapper">
               <Mail size={24} className="input-icon" />
-              <input
-                id="email"
+              <Field.Control
+                name="email"
                 type="email"
                 value={email}
-                onChange={handleEmailChange}
+                onValueChange={handleEmailChange}
                 placeholder="tu@correo.com"
                 className={`form-input ${emailError ? 'input-error' : ''}`}
                 aria-invalid={emailError ? 'true' : 'false'}
@@ -68,23 +69,23 @@ export default function Login() {
               />
             </div>
             {emailError ? (
-              <p id="email-error" className="error-message">
+              <Field.Error id="email-error" className="error-message">
                 {emailError}
-              </p>
+              </Field.Error>
             ) : null}
-          </div>
+          </Field.Root>
 
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
+          <Field.Root className="form-group">
+            <Field.Label className="form-label">
               Contraseña
-            </label>
+            </Field.Label>
             <div className="input-wrapper">
-              <Lock size={24} className="input-icon" />
-              <input
-                id="password"
+              <KeyRound size={24} className="input-icon" />
+              <Field.Control
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onValueChange={setPassword}
                 placeholder="Tu contraseña"
                 className="form-input"
               />
@@ -97,7 +98,7 @@ export default function Login() {
                 {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
               </button>
             </div>
-          </div>
+          </Field.Root>
 
           <button type="button" className="forgot-password-btn">
             ¿Olvidaste tu contraseña?
@@ -106,10 +107,10 @@ export default function Login() {
           <button type="submit" disabled={loading} className="submit-btn">
             {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>
-        </form>
+        </Form>
 
         <p className="privacy-notice">
-          🔒 Tus datos están protegidos bajo las normas de privacidad médica
+          Tus datos están protegidos bajo las normas de privacidad médica
         </p>
       </div>
     </div>
