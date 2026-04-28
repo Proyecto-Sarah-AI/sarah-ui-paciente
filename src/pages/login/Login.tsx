@@ -1,7 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form } from '@base-ui/react/form'
 import { Field } from '@base-ui/react/field'
 import { Eye, EyeOff, KeyRound, Mail } from 'lucide-react'
+import {
+  createThemeVars,
+  getEffectiveTheme,
+  getStoredTheme,
+  THEME_PALETTES,
+  type ThemeMode,
+} from '../../styles/theme.ts'
 import './Login.css'
 
 export default function Login() {
@@ -10,6 +17,24 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredTheme())
+  const effectiveTheme = getEffectiveTheme(themeMode)
+  const palette = THEME_PALETTES[effectiveTheme]
+  const themeVars = createThemeVars(palette)
+
+  useEffect(() => {
+    if (themeMode !== 'system') {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = () => {
+      setThemeMode('system')
+    }
+
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [themeMode])
 
   const validateEmail = (value: string) => {
     if (!value) {
@@ -43,7 +68,14 @@ export default function Login() {
   }
 
   return (
-    <div className="login-container">
+    <div
+      className="login-container"
+      style={{
+        ...themeVars,
+        background: `linear-gradient(180deg, ${palette.background} 0%, ${palette.backgroundSecondary} 45%, ${palette.background} 100%)`,
+        color: palette.textPrimary,
+      }}
+    >
       <div className="login-card">
         <div className="login-header">
           <h1 className="login-title">Bienvenido de vuelta</h1>

@@ -1,41 +1,21 @@
 .login-container {
-  --login-bg: #f5f8fd;
-  --login-bg-secondary: #dfe2e8;
-  --login-text-primary: #1f293b;
-  --login-text-secondary: #67778c;
-  --login-accent: #0db17f;
-  --login-hover: #17785a;
+  --login-bg: var(--ca-bg);
+  --login-card-bg: var(--ca-bg-secondary);
+  --login-bg-secondary: var(--ca-bg-secondary);
+  --login-text-primary: var(--ca-navy);
+  --login-text-secondary: var(--ca-text-secondary);
+  --login-accent: var(--ca-teal);
+  --login-hover: var(--ca-teal-dark);
   --login-danger: #ef4444;
-  --login-muted: #90a1b2;
-  --login-input-border: #d1d5db;
-  --login-hover-surface: #f3f4f6;
-  --login-white: #ffffff;
+  --login-muted: var(--ca-text-secondary);
+  --login-input-border: color-mix(in srgb, var(--ca-text-secondary) 30%, transparent);
+  --login-hover-surface: color-mix(in srgb, var(--ca-bg-secondary) 65%, var(--ca-bg));
+  --login-white: var(--ca-bg);
   --login-shadow: rgba(31, 41, 59, 0.1);
   --login-accent-shadow: rgba(13, 177, 127, 0.3);
   --login-accent-focus: rgba(13, 177, 127, 0.1);
   --login-danger-focus: rgba(239, 68, 68, 0.1);
-  --login-icon: #9ca3af;
-}
-
-@media (prefers-color-scheme: dark) {
-  .login-container {
-    --login-bg: #1f273a;
-    --login-bg-secondary: #1c2436;
-    --login-text-primary: #f1f6fa;
-    --login-text-secondary: #90a1b2;
-    --login-accent: #35b498;
-    --login-hover: #12956c;
-    --login-danger: #ef4444;
-    --login-muted: #90a1b2;
-    --login-input-border: #2f3b52;
-    --login-hover-surface: #27324a;
-    --login-white: #1c2436;
-    --login-shadow: rgba(0, 0, 0, 0.35);
-    --login-accent-shadow: rgba(53, 180, 152, 0.3);
-    --login-accent-focus: rgba(53, 180, 152, 0.2);
-    --login-danger-focus: rgba(239, 68, 68, 0.2);
-    --login-icon: #90a1b2;
-  }
+  --login-icon: color-mix(in srgb, var(--ca-text-secondary) 80%, var(--ca-bg));
 }
 
 .login-container {
@@ -48,9 +28,9 @@
 }
 
 .login-card {
-  background: var(--login-bg-secondary);
+  background-color: var(--login-card-bg);
   border-radius: 20px;
-  box-shadow: 0 20px 60px var(--login-shadow);
+  border: 1px solid var(--login-input-border);
   padding: 40px 30px;
   width: 100%;
   max-width: 420px;

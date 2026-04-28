@@ -2,80 +2,40 @@ import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from 
 import { useNavigate } from 'react-router-dom'
 import {
   Bell,
+  Camera,
+  Check,
   ChevronDown,
-  FileText,
-  Lightbulb,
   LogOut,
   Mic,
   Moon,
+  Plus,
   Send,
   Settings,
   Sparkles,
-  Stethoscope,
   Sun,
+  Upload,
   User,
+  X,
 } from 'lucide-react'
 import {
   Avatar,
   Button,
-  Collapsible,
   Field,
   Input,
   Menu,
-  Separator,
   Tooltip,
 } from '@base-ui/react'
+import {
+  createThemeVars,
+  getEffectiveTheme,
+  getStoredTheme,
+  setStoredTheme,
+  THEME_PALETTES,
+  type ThemeMode,
+} from '../../styles/theme.ts'
 
 type ChatRole = 'assistant' | 'user'
-type FloatingPanel = 'suggestions' | 'context' | null
 type ReminderChoice = 'yes' | 'no'
-type ThemeMode = 'light' | 'dark'
-
-interface ThemePalette {
-  background: string
-  backgroundSecondary: string
-  textPrimary: string
-  textSecondary: string
-  accent: string
-  hover: string
-}
-
-const THEME_PALETTES: Record<ThemeMode, ThemePalette> = {
-  light: {
-    background: '#f5f8fd',
-    backgroundSecondary: '#dfe2e8',
-    textPrimary: '#1f293b',
-    textSecondary: '#67778c',
-    accent: '#0db17f',
-    hover: '#17785a',
-  },
-  dark: {
-    background: '#1f273a',
-    backgroundSecondary: '#1c2436',
-    textPrimary: '#f1f6fa',
-    textSecondary: '#90a1b2',
-    accent: '#35b498',
-    hover: '#12956c',
-  },
-}
-
-// Edit only this field to set the default app theme.
-const DEFAULT_THEME_MODE: ThemeMode = 'light'
-
-function createThemeVars(palette: ThemePalette): CSSProperties {
-  return {
-    ['--ca-bg' as string]: palette.background,
-    ['--ca-bg-secondary' as string]: palette.backgroundSecondary,
-    ['--ca-text' as string]: palette.textPrimary,
-    ['--ca-text-secondary' as string]: palette.textSecondary,
-    ['--ca-accent' as string]: palette.accent,
-    ['--ca-accent-hover' as string]: palette.hover,
-    ['--ca-navy' as string]: palette.textPrimary,
-    ['--ca-teal' as string]: palette.accent,
-    ['--ca-teal-dark' as string]: palette.hover,
-    ['--ca-teal-light' as string]: palette.backgroundSecondary,
-  }
-}
 
 interface BaseMessage {
   id: number
@@ -97,11 +57,6 @@ interface ReminderMessage extends BaseMessage {
 
 type ChatMessage = TextMessage | ReminderMessage
 
-interface PromptChip {
-  label: string
-  prompt: string
-}
-
 const initialMessages: ChatMessage[] = [
   {
     id: 1,
@@ -121,24 +76,6 @@ const initialMessages: ChatMessage[] = [
   },
 ]
 
-const promptChips: PromptChip[] = [
-  {
-    label: 'Medicamento y horario',
-    prompt: 'Revisa mi medicamento actual y dime a que hora debo tomar la siguiente dosis.',
-  },
-  {
-    label: 'Efectos secundarios',
-    prompt: 'Tengo mareo despues de tomar la medicacion. Que hago?',
-  },
-  {
-    label: 'Interacciones',
-    prompt: 'Puedo mezclar paracetamol con mi tratamiento actual?',
-  },
-  {
-    label: 'Sintomas nuevos',
-    prompt: 'Ayudame a registrar un sintoma nuevo para mi equipo medico.',
-  },
-]
 
 function timeNow() {
   return new Date().toLocaleTimeString('es-ES', {
@@ -250,6 +187,20 @@ function MessageBubble({
 function ChatComposer({ onSend }: { onSend: (value: string) => void }) {
   const [text, setText] = useState('')
   const [isListening, setIsListening] = useState(false)
+  const cameraInputRef = useRef<HTMLInputElement | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [attachments, setAttachments] = useState<
+    Array<{ id: string; file: File; progress: number; status: 'uploading' | 'ready' }>
+  >([])
+  const uploadIntervalsRef = useRef<Record<string, number>>({})
+
+  useEffect(() => {
+    return () => {
+      Object.values(uploadIntervalsRef.current).forEach((intervalId) => {
+        window.clearInterval(intervalId)
+      })
+    }
+  }, [])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -261,18 +212,186 @@ function ChatComposer({ onSend }: { onSend: (value: string) => void }) {
     setText('')
   }
 
+  const handleOpenCamera = () => {
+    cameraInputRef.current?.click()
+  }
+
+  const handleOpenFilePicker = () => {
+    fileInputRef.current?.click()
+  }
+
+  const startUploadSimulation = (attachmentId: string) => {
+    const intervalId = window.setInterval(() => {
+      setAttachments((current) =>
+        current.map((attachment) => {
+          if (attachment.id !== attachmentId || attachment.status !== 'uploading') {
+            return attachment
+          }
+
+          const nextProgress = Math.min(attachment.progress + Math.floor(Math.random() * 18) + 8, 100)
+          if (nextProgress >= 100) {
+            window.clearInterval(uploadIntervalsRef.current[attachmentId])
+            delete uploadIntervalsRef.current[attachmentId]
+            return { ...attachment, progress: 100, status: 'ready' }
+          }
+
+          return { ...attachment, progress: nextProgress }
+        }),
+      )
+    }, 320)
+
+    uploadIntervalsRef.current[attachmentId] = intervalId
+  }
+
+  const handleAttachmentSelect = (files: FileList | null) => {
+    if (!files || files.length === 0) {
+      return
+    }
+
+    const nextAttachments = Array.from(files).map((file) => ({
+      id: `${file.name}-${file.size}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      file,
+      progress: 0,
+      status: 'uploading' as const,
+    }))
+
+    setAttachments((current) => [...current, ...nextAttachments])
+    nextAttachments.forEach((attachment) => startUploadSimulation(attachment.id))
+  }
+
+  const handleRemoveAttachment = (attachmentId: string) => {
+    const intervalId = uploadIntervalsRef.current[attachmentId]
+    if (intervalId) {
+      window.clearInterval(intervalId)
+      delete uploadIntervalsRef.current[attachmentId]
+    }
+
+    setAttachments((current) => current.filter((attachment) => attachment.id !== attachmentId))
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <Field.Root className="space-y-2">
         <Field.Label className="sr-only">Mensaje</Field.Label>
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(event) => {
+            handleAttachmentSelect(event.target.files)
+            event.currentTarget.value = ''
+          }}
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          multiple
+          onChange={(event) => {
+            handleAttachmentSelect(event.target.files)
+            event.currentTarget.value = ''
+          }}
+        />
+        {attachments.length > 0 ? (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {attachments.map((attachment) => {
+              const radius = 12
+              const circumference = 2 * Math.PI * radius
+              const progressOffset = circumference - (attachment.progress / 100) * circumference
+
+              return (
+                <div
+                  key={attachment.id}
+                  className="rounded-2xl border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-3 py-2 shadow-sm"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="relative h-8 w-8 shrink-0">
+                      <svg className="h-8 w-8 -rotate-90" viewBox="0 0 32 32" aria-hidden="true">
+                        <circle
+                          cx="16"
+                          cy="16"
+                          r={radius}
+                          className="fill-none stroke-[var(--ca-bg-secondary)]"
+                          strokeWidth="3"
+                        />
+                        <circle
+                          cx="16"
+                          cy="16"
+                          r={radius}
+                          className="fill-none stroke-[var(--ca-teal)] transition-all"
+                          strokeWidth="3"
+                          strokeDasharray={circumference}
+                          strokeDashoffset={progressOffset}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-[var(--ca-navy)]">
+                        {attachment.progress}
+                      </span>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-semibold text-[var(--ca-navy)]" title={attachment.file.name}>
+                        {attachment.file.name}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-[var(--ca-text-secondary)]">
+                        {formatFileSize(attachment.file.size)} ·{' '}
+                        {attachment.status === 'ready' ? 'Listo para enviar' : 'Subiendo...'}
+                      </p>
+                    </div>
+
+                    <Button
+                      type="button"
+                      onClick={() => handleRemoveAttachment(attachment.id)}
+                      className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--ca-text-secondary)] transition hover:bg-[var(--ca-bg-secondary)] hover:text-[var(--ca-navy)]"
+                      aria-label={`Eliminar ${attachment.file.name}`}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : null}
         <div className="flex items-end gap-2 rounded-[1.75rem] border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] p-2 shadow-[0_18px_60px_rgba(15,23,42,0.08)] focus-within:border-[var(--ca-teal)]">
-          <Button
-            type="button"
-            className="mb-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--ca-bg-secondary)] text-[var(--ca-text-secondary)] transition hover:bg-[var(--ca-bg)]"
-            aria-label="Adjuntar archivo"
-          >
-            <FileText className="h-5 w-5" />
-          </Button>
+          <Menu.Root>
+            <Menu.Trigger
+              type="button"
+              className="mb-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--ca-bg-secondary)] text-[var(--ca-text-secondary)] transition hover:bg-[var(--ca-bg)]"
+              aria-label="Agregar adjunto"
+            >
+              <Plus className="h-5 w-5" />
+            </Menu.Trigger>
+            <Menu.Portal>
+              <Menu.Positioner side="top" align="start" sideOffset={8} className="z-[95]">
+                <Menu.Popup className="min-w-52 overflow-hidden rounded-2xl border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] p-2 text-sm shadow-xl outline-none">
+                  <Menu.Item
+                    className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-[var(--ca-navy)] outline-none transition data-[highlighted]:bg-[var(--ca-bg-secondary)]"
+                    onClick={handleOpenCamera}
+                  >
+                    <Camera className="h-4 w-4 text-[var(--ca-teal)]" />
+                    Activar camara
+                  </Menu.Item>
+                  <Menu.Item
+                    className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-[var(--ca-navy)] outline-none transition data-[highlighted]:bg-[var(--ca-bg-secondary)]"
+                    onClick={handleOpenFilePicker}
+                  >
+                    <Upload className="h-4 w-4 text-[var(--ca-teal)]" />
+                    Subir archivos
+                  </Menu.Item>
+                </Menu.Popup>
+              </Menu.Positioner>
+            </Menu.Portal>
+          </Menu.Root>
 
           <Input
             value={text}
@@ -327,7 +446,7 @@ function ChatComposer({ onSend }: { onSend: (value: string) => void }) {
   )
 }
 
-function FloatingProfileMenu({ onLogout }: { onLogout: () => void }) {
+function FloatingProfileMenu({ onLogout, themeMode, onThemeChange, themeVars }: { onLogout: () => void; themeMode: ThemeMode; onThemeChange: (mode: ThemeMode) => void; themeVars: CSSProperties }) {
   return (
     <Menu.Root>
       <Menu.Trigger className="inline-flex items-center gap-2 rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-2 py-1.5 text-[var(--ca-navy)] shadow-[0_18px_50px_rgba(15,23,42,0.22)] transition hover:bg-[var(--ca-bg-secondary)]">
@@ -342,7 +461,7 @@ function FloatingProfileMenu({ onLogout }: { onLogout: () => void }) {
 
       <Menu.Portal>
         <Menu.Positioner side="bottom" align="end" sideOffset={10} className="z-[90]">
-          <Menu.Popup className="min-w-64 overflow-hidden rounded-3xl border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] p-2 text-sm shadow-2xl outline-none">
+          <Menu.Popup style={themeVars} className="min-w-64 overflow-hidden rounded-3xl border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] p-2 text-sm shadow-2xl outline-none">
             <div className="px-3 py-3">
               <p className="font-semibold text-[var(--ca-navy)]">Lorenzo Martinez</p>
               <p className="mt-1 text-xs text-[var(--ca-text-secondary)]">
@@ -359,6 +478,34 @@ function FloatingProfileMenu({ onLogout }: { onLogout: () => void }) {
               Configuracion
             </Menu.Item>
             <Menu.Separator className="my-1 h-px bg-[var(--ca-bg-secondary)]" />
+            <div className="px-2 py-2">
+              <p className="px-1 text-xs font-semibold uppercase tracking-wider text-[var(--ca-text-secondary)]">Tema</p>
+              <Menu.Item
+                className="mt-1 flex cursor-pointer items-center gap-2 rounded-2xl px-3 py-2 text-[var(--ca-navy)] outline-none transition data-[highlighted]:bg-[var(--ca-bg-secondary)]"
+                onClick={() => onThemeChange('light')}
+              >
+                <Sun className="h-4 w-4 text-[var(--ca-teal)]" />
+                <span className="flex-1">Modo claro</span>
+                {themeMode === 'light' && <Check className="h-4 w-4 text-[var(--ca-teal)]" />}
+              </Menu.Item>
+              <Menu.Item
+                className="flex cursor-pointer items-center gap-2 rounded-2xl px-3 py-2 text-[var(--ca-navy)] outline-none transition data-[highlighted]:bg-[var(--ca-bg-secondary)]"
+                onClick={() => onThemeChange('dark')}
+              >
+                <Moon className="h-4 w-4 text-[var(--ca-teal)]" />
+                <span className="flex-1">Modo oscuro</span>
+                {themeMode === 'dark' && <Check className="h-4 w-4 text-[var(--ca-teal)]" />}
+              </Menu.Item>
+              <Menu.Item
+                className="flex cursor-pointer items-center gap-2 rounded-2xl px-3 py-2 text-[var(--ca-navy)] outline-none transition data-[highlighted]:bg-[var(--ca-bg-secondary)]"
+                onClick={() => onThemeChange('system')}
+              >
+                <Sparkles className="h-4 w-4 text-[var(--ca-teal)]" />
+                <span className="flex-1">Tema del sistema</span>
+                {themeMode === 'system' && <Check className="h-4 w-4 text-[var(--ca-teal)]" />}
+              </Menu.Item>
+            </div>
+            <Menu.Separator className="my-1 h-px bg-[var(--ca-bg-secondary)]" />
             <Menu.Item
               className="flex cursor-pointer items-center gap-2 rounded-2xl px-3 py-2 text-red-600 outline-none transition data-[highlighted]:bg-red-50"
               onClick={onLogout}
@@ -373,113 +520,14 @@ function FloatingProfileMenu({ onLogout }: { onLogout: () => void }) {
   )
 }
 
-function FloatingPanels({
-  activePanel,
-  onClose,
-  onPickPrompt,
-  onTriggerReminder,
-}: {
-  activePanel: FloatingPanel
-  onClose: () => void
-  onPickPrompt: (prompt: string) => void
-  onTriggerReminder: () => void
-}) {
-  if (!activePanel) {
-    return null
-  }
-
-  return (
-    <div className="pointer-events-none fixed inset-0 z-[70] hidden md:block">
-      <div className="absolute inset-0" onClick={onClose} />
-      <div className="pointer-events-auto absolute right-6 top-24 w-[min(92vw,24rem)] rounded-[2rem] border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] p-4 shadow-2xl">
-        {activePanel === 'suggestions' ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-[var(--ca-navy)]">Sugerencias</p>
-                <p className="text-xs text-[var(--ca-text-secondary)]">Prompts rapidos</p>
-              </div>
-              <div className="rounded-2xl bg-[var(--ca-teal)]/10 p-3 text-[var(--ca-teal)]">
-                <Lightbulb className="h-5 w-5" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              {promptChips.map((chip) => (
-                <Button
-                  key={chip.label}
-                  type="button"
-                  onClick={() => onPickPrompt(chip.prompt)}
-                  className="w-full rounded-2xl border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg-secondary)] px-4 py-3 text-left text-sm font-medium text-[var(--ca-navy)] transition hover:border-[var(--ca-teal)]/30 hover:bg-[var(--ca-bg)]"
-                >
-                  {chip.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {activePanel === 'context' ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-[var(--ca-navy)]">Contexto</p>
-                <p className="text-xs text-[var(--ca-text-secondary)]">Datos utiles del chat</p>
-              </div>
-              <div className="rounded-2xl bg-[var(--ca-teal)]/10 p-3 text-[var(--ca-teal)]">
-                <Stethoscope className="h-5 w-5" />
-              </div>
-            </div>
-
-            <Separator className="h-px bg-[var(--ca-bg-secondary)]" />
-
-            <div className="space-y-3 text-sm text-[var(--ca-text-secondary)]">
-              <p>Sarah responde con tono simple y orientado a salud.</p>
-              <p>Usa este panel para ver atajos, recordatorios y guia de uso.</p>
-            </div>
-
-            <Collapsible.Root defaultOpen={false} className="rounded-[1.5rem] border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg-secondary)]">
-              <Collapsible.Trigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left">
-                <span className="text-sm font-semibold text-[var(--ca-navy)]">Acciones rapidas</span>
-                <span className="text-[var(--ca-teal)]">+</span>
-              </Collapsible.Trigger>
-              <Collapsible.Panel className="px-4 pb-4 text-sm text-[var(--ca-text-secondary)]">
-                Puedes iniciar una nueva conversacion, copiar respuestas y adjuntar contexto sin salir del chat.
-              </Collapsible.Panel>
-            </Collapsible.Root>
-          </div>
-        ) : null}
-
-        <div className="mt-4 flex items-center justify-between gap-2">
-          <Button
-            type="button"
-            onClick={onTriggerReminder}
-            className="inline-flex items-center gap-2 rounded-full bg-[var(--ca-teal)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[var(--ca-teal-dark)]"
-          >
-            <Bell className="h-4 w-4" />
-            Recordatorio
-          </Button>
-          <Button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-4 py-2 text-xs font-semibold text-[var(--ca-navy)] transition hover:bg-[var(--ca-bg-secondary)]"
-          >
-            Cerrar
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function Home() {
   const navigate = useNavigate()
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
-  const [activePanel, setActivePanel] = useState<FloatingPanel>(null)
-  const [themeMode, setThemeMode] = useState<ThemeMode>(DEFAULT_THEME_MODE)
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredTheme())
   const messagesViewportRef = useRef<HTMLDivElement | null>(null)
   const hasMountedRef = useRef(false)
-  const palette = THEME_PALETTES[themeMode]
+  const effectiveTheme = getEffectiveTheme(themeMode)
+  const palette = THEME_PALETTES[effectiveTheme]
   const themeVars = createThemeVars(palette)
 
   useEffect(() => {
@@ -495,6 +543,24 @@ export default function Home() {
 
     hasMountedRef.current = true
   }, [messages.length])
+
+  useEffect(() => {
+    setStoredTheme(themeMode)
+  }, [themeMode])
+
+  useEffect(() => {
+    if (themeMode !== 'system') {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = () => {
+      // Force re-render by triggering a state update
+      setThemeMode('system')
+    }
+
+    mediaQuery.addEventListener('change', handleChange)
+  }, [themeMode])
 
   const handleLogout = () => {
     localStorage.removeItem('sarah_auth_status')
@@ -522,19 +588,6 @@ export default function Home() {
     }
 
     setMessages((currentMessages) => [...currentMessages, userMessage, assistantMessage])
-  }
-
-  const handleTriggerReminder = () => {
-    const reminder: ReminderMessage = {
-      id: Date.now(),
-      kind: 'reminder',
-      role: 'assistant',
-      content: '¿Ya tomaste tu remedio de hoy?',
-      time: timeNow(),
-    }
-
-    setMessages((currentMessages) => [...currentMessages, reminder])
-    setActivePanel(null)
   }
 
   const handleReminderChoice = (messageId: number, choice: ReminderChoice) => {
@@ -576,8 +629,8 @@ export default function Home() {
     })
   }
 
-  const toggleTheme = () => {
-    setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))
+  const handleThemeChange = (mode: ThemeMode) => {
+    setThemeMode(mode)
   }
 
   return (
@@ -589,30 +642,13 @@ export default function Home() {
         color: palette.textPrimary,
       }}
     >
-      <FloatingPanels
-        activePanel={activePanel}
-        onClose={() => setActivePanel(null)}
-        onPickPrompt={handleSend}
-        onTriggerReminder={handleTriggerReminder}
-      />
+      <main className="relative flex h-screen min-h-screen w-full flex-col">
+        <header className="z-[60] flex w-full items-center justify-between border-b border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-4 py-3 md:px-6">
+          <p className="pl-2 text-lg font-semibold tracking-wide text-[var(--ca-teal)] md:pl-3">Sarah</p>
+          <FloatingProfileMenu onLogout={handleLogout} themeMode={themeMode} onThemeChange={handleThemeChange} themeVars={themeVars} />
+        </header>
 
-      <main className="relative flex h-screen min-h-screen w-full flex-col px-3 py-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="absolute right-3 top-3 z-[60] hidden md:block md:right-6 md:top-6">
-          <FloatingProfileMenu onLogout={handleLogout} />
-        </div>
-
-        <div className="absolute left-3 top-3 z-[56] md:left-6 md:top-6">
-          <Button
-            type="button"
-            onClick={toggleTheme}
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-4 py-2 text-xs font-semibold text-[var(--ca-navy)] shadow-sm backdrop-blur transition hover:bg-[var(--ca-bg-secondary)]"
-          >
-            {themeMode === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            {themeMode === 'light' ? 'Modo oscuro' : 'Modo claro'}
-          </Button>
-        </div>
-
-        <section className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col">
+        <section className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-3 pt-3 sm:px-4 md:px-6 lg:px-8">
           <div className="mx-auto flex w-full max-w-4xl flex-1 min-h-0 flex-col">
             <div ref={messagesViewportRef} className="flex-1 min-h-0 space-y-5 overflow-y-auto px-0 pb-56 pt-2 md:pb-44">
               {messages.map((message) => (
@@ -628,22 +664,6 @@ export default function Home() {
 
         <div className="fixed bottom-0 left-0 right-0 z-[50] border-t border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl">
           <div className="mx-auto w-full max-w-4xl px-3 sm:px-4 md:px-0">
-            <div className="mb-2 flex items-center justify-end gap-2">
-              <Button
-                type="button"
-                onClick={() => setActivePanel((current) => (current === 'suggestions' ? null : 'suggestions'))}
-                className="rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-4 py-2 text-xs font-semibold text-[var(--ca-navy)] shadow-sm backdrop-blur transition hover:bg-[var(--ca-bg-secondary)]"
-              >
-                Sugerencias
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setActivePanel((current) => (current === 'context' ? null : 'context'))}
-                className="rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-4 py-2 text-xs font-semibold text-[var(--ca-navy)] shadow-sm backdrop-blur transition hover:bg-[var(--ca-bg-secondary)]"
-              >
-                Contexto
-              </Button>
-            </div>
             <ChatComposer onSend={handleSend} />
           </div>
         </div>
