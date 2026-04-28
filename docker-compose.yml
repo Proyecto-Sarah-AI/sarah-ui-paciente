@@ -7,7 +7,7 @@ services:
     
     # 2. Tu puerto deseado (80) conectado a Vite (5173)
     ports:
-      - "80:5173"
+      - "3005:5173"
       
     # 3. Conectamos tus archivos locales con los del contenedor
     volumes:
