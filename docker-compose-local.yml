@@ -1,7 +1,7 @@
 services:
-  paciente:
+  ui-paciente:
     image: node:20-alpine
-    container_name: ui-paciente
+    container_name: paciente
     working_dir: /app
     volumes:
       - .:/app
