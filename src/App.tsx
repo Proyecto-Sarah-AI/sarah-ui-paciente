@@ -7,11 +7,11 @@ import Home from './pages/home/Home'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/consent" element={<Consent />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to="/paciente/login" replace />} />
+      <Route path="/paciente/consent" element={<Consent />} />
+      <Route path="/paciente/login" element={<Login />} />
+      <Route path="/paciente/home" element={<Home />} />
+      <Route path="*" element={<Navigate to="/paciente/login" replace />} />
     </Routes>
   )
 }

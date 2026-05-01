@@ -18,7 +18,7 @@ export default function Consent() {
       await new Promise((resolve) => setTimeout(resolve, 1500))
       localStorage.setItem('sarah_consent_status', 'accepted')
       localStorage.setItem('sarah_consent_timestamp', new Date().toISOString())
-      window.location.assign('/home')
+      window.location.assign('/paciente/home')
     } finally {
       setLoading(false)
     }
