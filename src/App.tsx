@@ -11,7 +11,6 @@ function App() {
       <Route path="/paciente/consent" element={<Consent />} />
       <Route path="/paciente/login" element={<Login />} />
       <Route path="/paciente/home" element={<Home />} />
-      <Route path="*" element={<Navigate to="/paciente/login" replace />} />
     </Routes>
   )
 }
