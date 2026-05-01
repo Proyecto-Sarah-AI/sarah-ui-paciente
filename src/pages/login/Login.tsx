@@ -61,7 +61,7 @@ export default function Login() {
       localStorage.setItem('sarah_auth_status', 'authenticated')
       localStorage.setItem('sarah_user_email', email)
       localStorage.setItem('sarah_auth_timestamp', new Date().toISOString())
-      window.location.assign('/consent')
+      window.location.assign('/paciente/consent')
     } finally {
       setLoading(false)
     }

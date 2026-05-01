@@ -566,7 +566,7 @@ export default function Home() {
     localStorage.removeItem('sarah_auth_status')
     localStorage.removeItem('sarah_user_email')
     localStorage.removeItem('sarah_auth_timestamp')
-    navigate('/login', { replace: true })
+    navigate('/paciente/login', { replace: true })
   }
 
   const handleSend = (text: string) => {
