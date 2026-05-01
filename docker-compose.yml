@@ -1,7 +1,7 @@
 services:
   paciente:
     image: node:20-alpine
-    container_name: ui-paciente
+    container_name: sarah-ui-paciente
     working_dir: /app
     volumes:
       - .:/app
