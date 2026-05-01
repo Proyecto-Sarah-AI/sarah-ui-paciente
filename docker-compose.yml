@@ -10,9 +10,9 @@ services:
     expose:
       - "5173"
     networks:
-      - sarah_network
+      - sarah-network
     restart: unless-stopped
 
 networks:
-  sarah_network:
+  sarah-network:
     external: true
