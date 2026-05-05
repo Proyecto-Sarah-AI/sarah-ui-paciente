@@ -6,7 +6,7 @@
   --login-text-secondary: var(--ca-text-secondary);
   --login-accent: var(--ca-teal);
   --login-hover: var(--ca-teal-dark);
-  --login-danger: #ef4444;
+  --login-danger: var(--ca-danger);
   --login-muted: var(--ca-text-secondary);
   --login-input-border: color-mix(in srgb, var(--ca-text-secondary) 30%, transparent);
   --login-hover-surface: color-mix(in srgb, var(--ca-bg-secondary) 65%, var(--ca-bg));
@@ -14,7 +14,7 @@
   --login-shadow: rgba(31, 41, 59, 0.1);
   --login-accent-shadow: rgba(13, 177, 127, 0.3);
   --login-accent-focus: rgba(13, 177, 127, 0.1);
-  --login-danger-focus: rgba(239, 68, 68, 0.1);
+  --login-danger-focus: var(--ca-danger-focus);
   --login-icon: color-mix(in srgb, var(--ca-text-secondary) 80%, var(--ca-bg));
 }
 

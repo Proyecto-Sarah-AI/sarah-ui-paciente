@@ -9,6 +9,8 @@ export interface ThemePalette {
   textSecondary: string
   accent: string
   hover: string
+  danger?: string
+  dangerFocus?: string
 }
 
 export const THEME_PALETTES: Record<'light' | 'dark', ThemePalette> = {
@@ -19,6 +21,8 @@ export const THEME_PALETTES: Record<'light' | 'dark', ThemePalette> = {
     textSecondary: '#67778c',
     accent: '#0db17f',
     hover: '#17785a',
+    danger: '#ef4444',
+    dangerFocus: 'rgba(239, 68, 68, 0.1)',
   },
   dark: {
     background: '#1f273a',
@@ -27,6 +31,8 @@ export const THEME_PALETTES: Record<'light' | 'dark', ThemePalette> = {
     textSecondary: '#90a1b2',
     accent: '#35b498',
     hover: '#12956c',
+    danger: '#f87171',
+    dangerFocus: 'rgba(248, 113, 113, 0.08)',
   },
 }
 
@@ -57,6 +63,8 @@ export function createThemeVars(palette: ThemePalette): CSSProperties {
     ['--ca-teal' as string]: palette.accent,
     ['--ca-teal-dark' as string]: palette.hover,
     ['--ca-teal-light' as string]: palette.backgroundSecondary,
+    ['--ca-danger' as string]: palette.danger || '#ef4444',
+    ['--ca-danger-focus' as string]: palette.dangerFocus || 'rgba(239, 68, 68, 0.1)',
   }
 }
 

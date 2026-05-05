@@ -10,17 +10,20 @@ import {
   type ThemeMode,
 } from '../../styles/theme.ts'
 import './Login.css'
+import { AuthProvider, useAuth } from '../../utils/auth'
 
-export default function Login() {
+function LoginInner() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [emailError, setEmailError] = useState('')
+  const [authError, setAuthError] = useState('')
   const [loading, setLoading] = useState(false)
   const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredTheme())
   const effectiveTheme = getEffectiveTheme(themeMode)
   const palette = THEME_PALETTES[effectiveTheme]
   const themeVars = createThemeVars(palette)
+  const { login } = useAuth()
 
   useEffect(() => {
     if (themeMode !== 'system') {
@@ -55,14 +58,36 @@ export default function Login() {
     e.preventDefault()
 
     setLoading(true)
+    setAuthError('')
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await login(email, password)
       localStorage.setItem('sarah_auth_status', 'authenticated')
       localStorage.setItem('sarah_user_email', email)
       localStorage.setItem('sarah_auth_timestamp', new Date().toISOString())
       window.location.assign('/paciente/consent')
-    } finally {
+    } catch (err: any) {
+        let msg = 'Error al iniciar sesión'
+
+        const code: string | undefined = err?.code
+        const rawMessage: string | undefined = typeof err?.message === 'string' ? err.message : undefined
+
+        if (
+          code === 'auth/invalid-credential' ||
+          code === 'auth/wrong-password' ||
+          code === 'auth/user-not-found'
+        ) {
+          msg = 'Correo o contraseña incorrectos'
+        } else if (code === 'auth/too-many-requests' || (rawMessage && rawMessage.includes('auth/too-many-requests'))) {
+          msg = 'Demasiados intentos. Intenta más tarde.'
+        } else if (rawMessage && rawMessage.includes('auth/invalid-credential')) {
+          msg = 'Correo o contraseña incorrectos'
+        } else if (rawMessage) {
+          msg = rawMessage.replace(/^Firebase: /, '')
+        }
+
+        setAuthError(msg)
+      } finally {
       setLoading(false)
     }
   }
@@ -136,6 +161,12 @@ export default function Login() {
             ¿Olvidaste tu contraseña?
           </button>
 
+          {authError ? (
+            <div className="auth-error" style={{ color: 'var(--ca-danger)', marginTop: 8 }} role="alert" aria-live="polite">
+              {authError}
+            </div>
+          ) : null}
+
           <button type="submit" disabled={loading} className="submit-btn">
             {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>
@@ -146,5 +177,13 @@ export default function Login() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function Login() {
+  return (
+    <AuthProvider>
+      <LoginInner />
+    </AuthProvider>
   )
 }
