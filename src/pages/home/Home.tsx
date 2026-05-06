@@ -33,49 +33,9 @@ import {
   THEME_PALETTES,
   type ThemeMode,
 } from '../../styles/theme.ts'
+import { useChatQuery, type ChatMessage, type TextMessage } from '../../utils/query.tsx'
 
-type ChatRole = 'assistant' | 'user'
 type ReminderChoice = 'yes' | 'no'
-
-interface BaseMessage {
-  id: number
-  time: string
-}
-
-interface TextMessage extends BaseMessage {
-  kind: 'text'
-  role: ChatRole
-  content: string
-}
-
-interface ReminderMessage extends BaseMessage {
-  kind: 'reminder'
-  role: 'assistant'
-  content: string
-  selection?: ReminderChoice
-}
-
-type ChatMessage = TextMessage | ReminderMessage
-
-const initialMessages: ChatMessage[] = [
-  {
-    id: 1,
-    kind: 'text',
-    role: 'assistant',
-    content:
-      'Hola, soy Sarah. Puedo ayudarte a revisar medicamentos, sintomas y recomendaciones basicas de seguimiento.',
-    time: '09:12',
-  },
-  {
-    id: 2,
-    kind: 'text',
-    role: 'assistant',
-    content:
-      'Escribe tu duda o usa un acceso rapido para revisar tratamiento, interacciones o recordatorios.',
-    time: '09:12',
-  },
-]
-
 
 function timeNow() {
   return new Date().toLocaleTimeString('es-ES', {
@@ -522,7 +482,7 @@ function FloatingProfileMenu({ onLogout, themeMode, onThemeChange, themeVars }: 
 
 export default function Home() {
   const navigate = useNavigate()
-  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
+  const { messages, setMessages, sendMessage } = useChatQuery()
   const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredTheme())
   const messagesViewportRef = useRef<HTMLDivElement | null>(null)
   const hasMountedRef = useRef(false)
@@ -569,25 +529,8 @@ export default function Home() {
     navigate('/login', { replace: true })
   }
 
-  const handleSend = (text: string) => {
-    const userMessage: TextMessage = {
-      id: Date.now(),
-      kind: 'text',
-      role: 'user',
-      content: text,
-      time: timeNow(),
-    }
-
-    const assistantMessage: TextMessage = {
-      id: Date.now() + 1,
-      kind: 'text',
-      role: 'assistant',
-      content:
-        'Recibido. Estoy revisando tu consulta y puedo ayudarte con una respuesta simple basada en tu tratamiento.',
-      time: timeNow(),
-    }
-
-    setMessages((currentMessages) => [...currentMessages, userMessage, assistantMessage])
+  const handleSend = async (text: string) => {
+    await sendMessage(text)
   }
 
   const handleReminderChoice = (messageId: number, choice: ReminderChoice) => {
