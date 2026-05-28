@@ -114,6 +114,17 @@
   background-color: var(--login-white);
 }
 
+.form-input--readonly {
+  cursor: not-allowed;
+  background-color: var(--login-hover-surface);
+  color: var(--login-text-secondary);
+}
+
+.form-input--readonly:focus {
+  border-color: var(--login-input-border);
+  box-shadow: none;
+}
+
 .form-input:focus {
   border-color: var(--login-accent);
   box-shadow: 0 0 0 3px var(--login-accent-focus);
@@ -156,6 +167,17 @@
   color: var(--login-danger);
   margin: 0;
   margin-top: 4px;
+}
+
+.status-message {
+  font-size: 14px;
+  color: var(--login-danger);
+  margin: 0;
+  margin-top: 4px;
+}
+
+.status-message--success {
+  color: var(--ca-success, #14804a);
 }
 
 .forgot-password-btn {
