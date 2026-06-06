@@ -12,18 +12,54 @@ import {
 } from '../../styles/theme.ts'
 import '../login/Login.css'
 
+const API_URL = import.meta.env.VITE_API_URL as string
+
 function ActivateInner() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const [email] = useState(() => searchParams.get('email') ?? localStorage.getItem('sarah_user_email') ?? '')
+  const [activationToken] = useState(() => searchParams.get('token') ?? '')
+  const [email, setEmail] = useState('')
+  const [emailLoading, setEmailLoading] = useState(Boolean(activationToken))
+  const [tokenInvalid, setTokenInvalid] = useState(false)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [apiError, setApiError] = useState('')
   const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredTheme())
 
   const effectiveTheme = getEffectiveTheme(themeMode)
   const palette = THEME_PALETTES[effectiveTheme]
   const themeVars = createThemeVars(palette)
+
+  useEffect(() => {
+    if (!activationToken) {
+      setTokenInvalid(true)
+      return
+    }
+
+    let active = true
+
+    void (async () => {
+      try {
+        const response = await fetch(`${API_URL}/auth/activate?token=${encodeURIComponent(activationToken)}`)
+        if (!active) return
+
+        if (!response.ok) {
+          setTokenInvalid(true)
+          return
+        }
+
+        const data = await response.json() as { email: string }
+        setEmail(data.email)
+      } catch {
+        if (active) setTokenInvalid(true)
+      } finally {
+        if (active) setEmailLoading(false)
+      }
+    })()
+
+    return () => { active = false }
+  }, [activationToken])
 
   useEffect(() => {
     if (themeMode !== 'system') {
@@ -66,7 +102,7 @@ function ActivateInner() {
 
   const isStatusSuccess =
     password.length >= 8 && confirmPassword.length >= 8 && password === confirmPassword
-  const canSubmit = Boolean(email.trim()) && password.length >= 8 && password === confirmPassword && !loading
+  const canSubmit = Boolean(email) && !tokenInvalid && !emailLoading && password.length >= 8 && password === confirmPassword && !loading
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -76,10 +112,29 @@ function ActivateInner() {
     }
 
     setLoading(true)
+    setApiError('')
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const response = await fetch(`${API_URL}/auth/activate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password,
+          password_confirm: confirmPassword,
+          activation_token: activationToken,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        const detail: string = data?.detail ?? 'Error al activar la cuenta. Intenta de nuevo.'
+        setApiError(detail)
+        return
+      }
+
       navigate('/login', { replace: true })
+    } catch {
+      setApiError('No se pudo conectar con el servidor. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -108,9 +163,10 @@ function ActivateInner() {
               <Field.Control
                 name="email"
                 type="email"
-                value={email}
+                value={emailLoading ? '' : email}
                 readOnly
                 tabIndex={-1}
+                placeholder={emailLoading ? 'Verificando enlace...' : ''}
                 className="form-input form-input--readonly"
                 aria-readonly="true"
                 aria-label="Correo electrónico de la cuenta"
@@ -162,9 +218,15 @@ function ActivateInner() {
             ) : null}
           </Field.Root>
 
-          {!email.trim() ? (
+          {tokenInvalid ? (
             <div className="error-message" role="alert" aria-live="polite">
-              No se encontró un correo para activar esta cuenta.
+              El enlace de activación es inválido o ha expirado.
+            </div>
+          ) : null}
+
+          {apiError ? (
+            <div className="auth-error" style={{ color: 'var(--ca-danger)', marginTop: 8 }} role="alert" aria-live="polite">
+              {apiError}
             </div>
           ) : null}
 
