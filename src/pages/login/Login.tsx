@@ -10,7 +10,7 @@ import {
   type ThemeMode,
 } from '../../styles/theme.ts'
 import './Login.css'
-import { AuthProvider, useAuth } from '../../utils/auth'
+import { useAuth } from '../../utils/auth'
 
 function LoginInner() {
   const [email, setEmail] = useState('')
@@ -62,32 +62,11 @@ function LoginInner() {
 
     try {
       await login(email, password)
-      localStorage.setItem('sarah_auth_status', 'authenticated')
-      localStorage.setItem('sarah_user_email', email)
-      localStorage.setItem('sarah_auth_timestamp', new Date().toISOString())
       window.location.assign('/paciente/consent')
-    } catch (err: any) {
-        let msg = 'Error al iniciar sesión'
-
-        const code: string | undefined = err?.code
-        const rawMessage: string | undefined = typeof err?.message === 'string' ? err.message : undefined
-
-        if (
-          code === 'auth/invalid-credential' ||
-          code === 'auth/wrong-password' ||
-          code === 'auth/user-not-found'
-        ) {
-          msg = 'Correo o contraseña incorrectos'
-        } else if (code === 'auth/too-many-requests' || (rawMessage && rawMessage.includes('auth/too-many-requests'))) {
-          msg = 'Demasiados intentos. Intenta más tarde.'
-        } else if (rawMessage && rawMessage.includes('auth/invalid-credential')) {
-          msg = 'Correo o contraseña incorrectos'
-        } else if (rawMessage) {
-          msg = rawMessage.replace(/^Firebase: /, '')
-        }
-
-        setAuthError(msg)
-      } finally {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'
+      setAuthError(msg)
+    } finally {
       setLoading(false)
     }
   }
@@ -181,9 +160,5 @@ function LoginInner() {
 }
 
 export default function Login() {
-  return (
-    <AuthProvider>
-      <LoginInner />
-    </AuthProvider>
-  )
+  return <LoginInner />
 }

@@ -33,6 +33,7 @@ import {
   THEME_PALETTES,
   type ThemeMode,
 } from '../../styles/theme.ts'
+import { useAuth } from '../../utils/auth'
 import { useChatQuery, type ChatMessage, type TextMessage } from '../../utils/query.tsx'
 
 type ReminderChoice = 'yes' | 'no'
@@ -406,16 +407,38 @@ function ChatComposer({ onSend }: { onSend: (value: string) => void }) {
   )
 }
 
-function FloatingProfileMenu({ onLogout, themeMode, onThemeChange, themeVars }: { onLogout: () => void; themeMode: ThemeMode; onThemeChange: (mode: ThemeMode) => void; themeVars: CSSProperties }) {
+function FloatingProfileMenu({
+  onLogout,
+  themeMode,
+  onThemeChange,
+  themeVars,
+  displayName,
+  email,
+}: {
+  onLogout: () => void
+  themeMode: ThemeMode
+  onThemeChange: (mode: ThemeMode) => void
+  themeVars: CSSProperties
+  displayName: string
+  email: string
+}) {
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('')
+    .slice(0, 2) || 'U'
+
   return (
     <Menu.Root>
       <Menu.Trigger className="inline-flex items-center gap-2 rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-2 py-1.5 text-[var(--ca-navy)] shadow-[0_18px_50px_rgba(15,23,42,0.22)] transition hover:bg-[var(--ca-bg-secondary)]">
         <Avatar.Root className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[var(--ca-bg-secondary)] bg-[var(--ca-teal)]/15 text-sm font-semibold text-[var(--ca-navy)]">
           <Avatar.Fallback className="flex h-full w-full items-center justify-center">
-            LM
+            {initials}
           </Avatar.Fallback>
         </Avatar.Root>
-        <span className="hidden text-sm font-medium sm:block">Lorenzo</span>
+        <span className="hidden text-sm font-medium sm:block">{displayName}</span>
         <ChevronDown className="h-4 w-4" />
       </Menu.Trigger>
 
@@ -423,10 +446,8 @@ function FloatingProfileMenu({ onLogout, themeMode, onThemeChange, themeVars }: 
         <Menu.Positioner side="bottom" align="end" sideOffset={10} className="z-[90]">
           <Menu.Popup style={themeVars} className="min-w-64 overflow-hidden rounded-3xl border border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] p-2 text-sm shadow-2xl outline-none">
             <div className="px-3 py-3">
-              <p className="font-semibold text-[var(--ca-navy)]">Lorenzo Martinez</p>
-              <p className="mt-1 text-xs text-[var(--ca-text-secondary)]">
-                lorenzo.martinez@email.com
-              </p>
+              <p className="font-semibold text-[var(--ca-navy)]">{displayName}</p>
+              <p className="mt-1 text-xs text-[var(--ca-text-secondary)]">{email}</p>
             </div>
             <Menu.Separator className="my-1 h-px bg-[var(--ca-bg-secondary)]" />
             <Menu.Item className="flex cursor-pointer items-center gap-2 rounded-2xl px-3 py-2 text-[var(--ca-navy)] outline-none transition data-[highlighted]:bg-[var(--ca-bg-secondary)]">
@@ -482,6 +503,7 @@ function FloatingProfileMenu({ onLogout, themeMode, onThemeChange, themeVars }: 
 
 export default function Home() {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
   const { messages, setMessages, sendMessage } = useChatQuery()
   const [themeMode, setThemeMode] = useState<ThemeMode>(getStoredTheme())
   const messagesViewportRef = useRef<HTMLDivElement | null>(null)
@@ -523,9 +545,7 @@ export default function Home() {
   }, [themeMode])
 
   const handleLogout = () => {
-    localStorage.removeItem('sarah_auth_status')
-    localStorage.removeItem('sarah_user_email')
-    localStorage.removeItem('sarah_auth_timestamp')
+    void logout()
     navigate('/login', { replace: true })
   }
 
@@ -576,6 +596,9 @@ export default function Home() {
     setThemeMode(mode)
   }
 
+  const displayName = user?.nombre?.trim() || user?.email?.split('@')[0] || 'Usuario'
+  const email = user?.email || 'Sin correo'
+
   return (
     <div
       className="min-h-screen overflow-hidden text-[var(--ca-navy)]"
@@ -588,7 +611,14 @@ export default function Home() {
       <main className="relative flex h-screen min-h-screen w-full flex-col">
         <header className="z-[60] flex w-full items-center justify-between border-b border-[var(--ca-bg-secondary)] bg-[var(--ca-bg)] px-4 py-3 md:px-6">
           <p className="pl-2 text-lg font-semibold tracking-wide text-[var(--ca-teal)] md:pl-3">Sarah</p>
-          <FloatingProfileMenu onLogout={handleLogout} themeMode={themeMode} onThemeChange={handleThemeChange} themeVars={themeVars} />
+          <FloatingProfileMenu
+            onLogout={handleLogout}
+            themeMode={themeMode}
+            onThemeChange={handleThemeChange}
+            themeVars={themeVars}
+            displayName={displayName}
+            email={email}
+          />
         </header>
 
         <section className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col px-3 pt-3 sm:px-4 md:px-6 lg:px-8">
