@@ -30,4 +30,5 @@ jobs:
             cd "$PROJECT_PATH" && \
             git pull origin main && \
             docker compose down && \
-            VITE_API_URL="${{ vars.API_URL }}" docker compose up -d --build
+            VITE_API_URL="${{ vars.API_URL }}" docker compose build --pull && \
+            VITE_API_URL="${{ vars.API_URL }}" docker compose up -d
