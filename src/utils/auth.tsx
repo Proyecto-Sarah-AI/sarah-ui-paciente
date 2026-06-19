@@ -5,6 +5,7 @@ type AuthSession = {
   email: string
   nombre: string | null
   accessToken: string
+  id_paciente: number | null
 }
 
 type AuthContextValue = {
@@ -26,6 +27,7 @@ type LoginApiResponse = {
   uid: string
   email: string
   nombre?: string | null
+  id_paciente?: number | null
 }
 
 const API_URL =
@@ -39,6 +41,7 @@ const AUTH_TOKEN_KEY = 'sarah_access_token'
 const AUTH_EMAIL_KEY = 'sarah_user_email'
 const AUTH_UID_KEY = 'sarah_user_uid'
 const AUTH_NAME_KEY = 'sarah_user_name'
+const AUTH_ID_PACIENTE_KEY = 'sarah_user_id_paciente'
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
@@ -46,7 +49,8 @@ function readStoredSession(): AuthSession | null {
   const accessToken = localStorage.getItem(AUTH_TOKEN_KEY)
   const email = localStorage.getItem(AUTH_EMAIL_KEY)
   const uid = localStorage.getItem(AUTH_UID_KEY)
-
+  const storedId = localStorage.getItem(AUTH_ID_PACIENTE_KEY)
+  
   if (!accessToken || !email || !uid) {
     return null
   }
@@ -56,6 +60,7 @@ function readStoredSession(): AuthSession | null {
     email,
     uid,
     nombre: localStorage.getItem(AUTH_NAME_KEY),
+    id_paciente: storedId ? parseInt(storedId, 10) : null,
   }
 }
 
@@ -66,6 +71,12 @@ function persistSession(session: AuthSession) {
   localStorage.setItem(AUTH_EMAIL_KEY, session.email)
   localStorage.setItem(AUTH_UID_KEY, session.uid)
 
+  if (session.id_paciente !== null && session.id_paciente !== undefined) {
+    localStorage.setItem(AUTH_ID_PACIENTE_KEY, session.id_paciente.toString())
+  } else {
+    localStorage.removeItem(AUTH_ID_PACIENTE_KEY)
+  }
+  
   if (session.nombre) {
     localStorage.setItem(AUTH_NAME_KEY, session.nombre)
   } else {
@@ -120,6 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       uid: payload.uid,
       email: payload.email,
       nombre: payload.nombre ?? null,
+      id_paciente: payload.id_paciente ?? null,
     }
 
     setUser(session)
@@ -134,6 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(AUTH_EMAIL_KEY)
     localStorage.removeItem(AUTH_UID_KEY)
     localStorage.removeItem(AUTH_NAME_KEY)
+    localStorage.removeItem(AUTH_ID_PACIENTE_KEY)
     setUser(null)
   }
 
