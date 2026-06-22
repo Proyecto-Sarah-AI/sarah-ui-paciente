@@ -1,4 +1,4 @@
-  import { useState } from 'react'
+  import { useState, useEffect } from 'react'
   import { useAuth } from './auth'
   export type ChatRole = 'assistant' | 'user'
 
@@ -26,6 +26,15 @@
     response?: string
   }
 
+  interface InteraccionRead {
+    id_interaccion: number
+    fecha_hora: string
+    emisor: 'paciente' | 'assistant'
+    contenido: string
+    tipo_mensaje?: string
+  }
+
+  const HISTORY_LIMIT = 20
   const CHAT_API_URL = 'http://localhost:8000/interacciones/'
   const CHAT_FALLBACK_ERROR_MESSAGE = 'No pude conectar con el chatbot. Intenta de nuevo.'
 
@@ -36,6 +45,27 @@
       hour12: false,
     })
   }
+
+  function formatTime(isoString: string) {
+    const date = new Date(isoString)
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+  }
+
+  //Se convierte la interaccion del backend al formato del frontend
+  function interaccionToChatMessage(interaccion: InteraccionRead): ChatMessage {
+    return {
+      id: interaccion.id_interaccion,
+      kind: 'text',
+      role: interaccion.emisor === 'paciente' ? 'user' : 'assistant',
+      content: interaccion.contenido,
+      time: formatTime(interaccion.fecha_hora),
+    }
+  }
+
 
   async function postChatMessage(token: string, time: string, userId: number | null, message: string) {
     const response = await fetch(CHAT_API_URL, {
@@ -61,11 +91,59 @@
     return (await response.json()) as ChatApiResponse
   }
 
+  async function fetchChatHistory(token: string, userId: number | null) {
+    if (!userId || !token) return []
+
+    try {
+      const response = await fetch(
+        `${CHAT_API_URL}paciente/${userId}?limit=${HISTORY_LIMIT}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+        }
+      )
+
+      if (!response.ok) {
+        console.error('Failed to fetch chat history:', response.status)
+        return []
+      }
+
+      const data = (await response.json()) as InteraccionRead[]
+      
+      return data.reverse().map(interaccionToChatMessage)
+    } catch (error) {
+      console.error('Error fetching chat history:', error)
+      return []
+    }
+  }
+
   export function useChatQuery() {
     const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [isLoadingHistory, setIsLoadingHistory] = useState(true)
     const { user } = useAuth() 
     const token = user?.accessToken ?? ''
     const userId = user?.id_paciente ?? null
+
+    //Cargar histórico
+    useEffect(() => {
+      const loadHistory = async () => {
+      setIsLoadingHistory(true)
+
+      try {
+        const history = await fetchChatHistory(token, userId)
+        setMessages(history)
+      } finally {
+        setIsLoadingHistory(false)
+      }
+    }
+
+      if (token && userId) {
+        loadHistory()
+      } else {
+        setIsLoadingHistory(false)
+      }
+    }, [token, userId])
 
     const sendMessage = async (text: string) => {
       if (!token) return
@@ -112,5 +190,6 @@
       messages,
       setMessages,
       sendMessage,
+      isLoadingHistory,
     }
   }
